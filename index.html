@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Zero Trust MFA Guardrails for Education &amp; Non-profit</title>
+<meta name="description" content="An actionable, non-technical guide that helps schools and non-profits choose the right MFA and Zero Trust guardrails per person and per device — including students who can't use a phone." />
+<style>
+  :root {
+    --bg: #f5f7fa;
+    --surface: #ffffff;
+    --ink: #1b1f27;
+    --ink-soft: #54606e;
+    --line: #dfe5ec;
+    --brand: #2156c4;
+    --brand-soft: #e8f0ff;
+    --l0: #c0392b;   /* risk */
+    --l1: #d98324;   /* baseline */
+    --l2: #2f8f5b;   /* better */
+    --l3: #2156c4;   /* best/gold */
+    --gold: #b8860b;
+    --shadow: 0 1px 2px rgba(20,30,50,.06), 0 6px 20px rgba(20,30,50,.07);
+    --radius: 14px;
+    --maxw: 1140px;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    color: var(--ink);
+    background: var(--bg);
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: var(--brand); }
+  .wrap { max-width: var(--maxw); margin: 0 auto; padding: 0 20px; }
+
+  /* ---------- Header / exec banner ---------- */
+  header.hero {
+    background: linear-gradient(135deg, #16335f 0%, #2156c4 100%);
+    color: #fff;
+    padding: 38px 0 30px;
+  }
+  header.hero h1 { margin: 0 0 8px; font-size: clamp(1.5rem, 3.5vw, 2.3rem); line-height: 1.15; }
+  header.hero p.lead { margin: 0; max-width: 760px; font-size: 1.05rem; color: #d6e2ff; }
+  .pill-row { display:flex; flex-wrap:wrap; gap:8px; margin-top:18px; }
+  .pill { background: rgba(255,255,255,.14); border:1px solid rgba(255,255,255,.25); color:#fff;
+    padding:5px 11px; border-radius:999px; font-size:.82rem; }
+
+  .cio-banner {
+    background: var(--brand-soft);
+    border-left: 5px solid var(--brand);
+    border-radius: 10px;
+    padding: 14px 18px;
+    margin: 22px 0 6px;
+    font-size: .98rem;
+  }
+  .cio-banner strong { color: #16335f; }
+
+  section { padding: 30px 0; }
+  h2.sec { font-size: 1.35rem; margin: 0 0 4px; }
+  p.sec-sub { margin: 0 0 20px; color: var(--ink-soft); max-width: 760px; }
+
+  /* ---------- Selector ---------- */
+  .selector {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 20px;
+  }
+  .field-grid { display:grid; gap:18px; grid-template-columns: repeat(auto-fit, minmax(210px,1fr)); }
+  .field > label.flbl { display:block; font-weight:600; font-size:.82rem; text-transform:uppercase;
+    letter-spacing:.04em; color:var(--ink-soft); margin-bottom:8px; }
+  .opts { display:flex; flex-wrap:wrap; gap:8px; }
+  .opt {
+    border:1px solid var(--line); background:#fff; color:var(--ink);
+    border-radius:10px; padding:8px 12px; font-size:.9rem; cursor:pointer;
+    transition: all .12s ease; font-family:inherit;
+  }
+  .opt:hover { border-color: var(--brand); }
+  .opt[aria-pressed="true"] {
+    background: var(--brand); border-color: var(--brand); color:#fff; font-weight:600;
+  }
+  .opt:focus-visible { outline:3px solid #ffbf47; outline-offset:2px; }
+  .hint { font-size:.78rem; color:var(--ink-soft); margin-top:6px; }
+
+  /* ---------- Ladder ---------- */
+  .ladder-wrap { margin-top:26px; display:grid; gap:22px; grid-template-columns: 280px 1fr; }
+  @media (max-width: 860px){ .ladder-wrap { grid-template-columns: 1fr; } }
+  .ladder { background:var(--surface); border:1px solid var(--line); border-radius:var(--radius);
+    box-shadow:var(--shadow); padding:14px; }
+  .ladder svg { width:100%; height:auto; display:block; }
+
+  /* ---------- Result cards ---------- */
+  .cards { display:grid; gap:14px; }
+  .card {
+    background:var(--surface); border:1px solid var(--line); border-radius:var(--radius);
+    box-shadow:var(--shadow); overflow:hidden;
+  }
+  .card .chead { padding:12px 16px; display:flex; align-items:center; gap:10px;
+    color:#fff; font-weight:600; }
+  .card .cbody { padding:14px 16px; }
+  .card .cbody ul { margin:0; padding-left:18px; }
+  .card .cbody li { margin:5px 0; }
+  .card .cbody li .why { color:var(--ink-soft); font-size:.86rem; }
+  .lvl-tag { font-size:.72rem; text-transform:uppercase; letter-spacing:.05em;
+    background:rgba(255,255,255,.22); padding:2px 8px; border-radius:999px; }
+  .c0 .chead{ background:var(--l0);} .c1 .chead{ background:var(--l1);}
+  .c2 .chead{ background:var(--l2);} .c3 .chead{ background:var(--l3);}
+  .recommended { outline:3px solid var(--gold); }
+  .rec-flag { display:inline-block; background:var(--gold); color:#fff; font-size:.72rem;
+    padding:2px 8px; border-radius:999px; margin-left:auto; }
+
+  .context-note { background:#fff8e6; border:1px solid #f0d98a; border-radius:10px;
+    padding:12px 14px; margin-top:14px; font-size:.92rem; }
+  .context-note b { color:#8a6d1a; }
+
+  /* ---------- Admin lane ---------- */
+  .admin-lane { background:linear-gradient(135deg,#1c1c2b,#2a2a44); color:#fff;
+    border-radius:var(--radius); padding:22px; box-shadow:var(--shadow); }
+  .admin-lane h3 { margin:0 0 6px; }
+  .admin-lane .gold-grid { display:grid; gap:12px; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); margin-top:14px; }
+  .gold-card { background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.18);
+    border-radius:10px; padding:12px 14px; }
+  .gold-card h4 { margin:0 0 4px; font-size:.98rem; color:#ffd66b; }
+  .gold-card p { margin:0; font-size:.88rem; color:#d6dbe8; }
+
+  /* ---------- Generic info blocks ---------- */
+  .grid2 { display:grid; gap:16px; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); }
+  .block { background:var(--surface); border:1px solid var(--line); border-radius:var(--radius);
+    box-shadow:var(--shadow); padding:18px; }
+  .block h3 { margin:0 0 8px; }
+  .check { list-style:none; padding:0; margin:0; }
+  .check li { padding-left:26px; position:relative; margin:8px 0; }
+  .check li::before { content:"✓"; position:absolute; left:0; top:0; color:var(--l2);
+    font-weight:700; }
+  .menu-tbl { width:100%; border-collapse:collapse; font-size:.92rem; }
+  .menu-tbl th, .menu-tbl td { text-align:left; padding:8px 10px; border-bottom:1px solid var(--line); vertical-align:top; }
+  .menu-tbl th { color:var(--ink-soft); font-size:.78rem; text-transform:uppercase; letter-spacing:.04em; }
+  .badge { display:inline-block; background:var(--brand-soft); color:var(--brand);
+    border-radius:6px; padding:1px 7px; font-size:.78rem; font-weight:600; }
+
+  /* ---------- Glossary ---------- */
+  .term { border-bottom:1px dotted var(--brand); cursor:help; }
+  details.gloss { border:1px solid var(--line); border-radius:10px; background:#fff; padding:0 14px; margin:8px 0; }
+  details.gloss summary { cursor:pointer; font-weight:600; padding:12px 0; }
+  details.gloss p { margin:0 0 12px; color:var(--ink-soft); }
+
+  footer { padding:30px 0 50px; color:var(--ink-soft); font-size:.86rem; }
+  footer a { color:var(--brand); }
+  .disclaimer { background:#fff; border:1px solid var(--line); border-radius:10px; padding:14px 16px; margin-top:12px; }
+
+  .toolbar { display:flex; gap:10px; flex-wrap:wrap; margin-top:14px; }
+  .btn { font-family:inherit; cursor:pointer; border-radius:10px; padding:9px 14px; font-size:.9rem;
+    border:1px solid var(--brand); background:#fff; color:var(--brand); font-weight:600; }
+  .btn.primary { background:var(--brand); color:#fff; }
+  .btn:focus-visible { outline:3px solid #ffbf47; outline-offset:2px; }
+
+  /* ---------- Print ---------- */
+  @media print {
+    header.hero { background:#16335f !important; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+    .selector, .toolbar, .pill-row, details.gloss summary::-webkit-details-marker { box-shadow:none; }
+    .no-print { display:none !important; }
+    body { background:#fff; }
+    section { padding:14px 0; }
+    .card, .block, .admin-lane, .ladder { break-inside:avoid; box-shadow:none; }
+    details.gloss[open] summary { font-weight:700; }
+    details.gloss { break-inside:avoid; }
+    a[href^="http"]::after { content:" (" attr(href) ")"; font-size:.7rem; color:#666; }
+  }
+</style>
+</head>
+<body>
+<header class="hero">
+  <div class="wrap">
+    <h1>Zero Trust sign-in guardrails for schools &amp; non-profits</h1>
+    <p class="lead">Pick who is signing in and what device they use. Get a clear, jargon-light path
+      from "password only" to phishing-resistant sign-in — including students who don't have a phone
+      or can't use one in class.</p>
+    <div class="pill-row">
+      <span class="pill">No phone required for students</span>
+      <span class="pill">Good → Better → Best</span>
+      <span class="pill">For CIOs &amp; IT managers</span>
+      <span class="pill">Works with managed, MAM &amp; unmanaged devices</span>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="cio-banner">
+    <strong>Why this matters:</strong> stolen passwords are the #1 way attackers get into school and
+    charity tenants. "We can't do MFA for students" usually means <em>password-only</em> — the weakest
+    option. There is always a step you can take today. This tool shows the next realistic step for each
+    group of people, not an all-or-nothing leap.
+  </div>
+</div>
+
+<!-- ===================== INTERACTIVE SELECTOR ===================== -->
+<section>
+  <div class="wrap">
+    <h2 class="sec">1 · Choose the person and their device</h2>
+    <p class="sec-sub">Everyone shares the same destination — <strong>phishing-resistant sign-in</strong>.
+      Only the steps to get there change depending on the device.</p>
+
+    <div class="selector">
+      <div class="field-grid">
+        <div class="field">
+          <label class="flbl" id="lbl-persona">Who is signing in?</label>
+          <div class="opts" role="group" aria-labelledby="lbl-persona" id="grp-persona"></div>
+        </div>
+        <div class="field">
+          <label class="flbl" id="lbl-owner">Who owns the device?</label>
+          <div class="opts" role="group" aria-labelledby="lbl-owner" id="grp-owner"></div>
+        </div>
+        <div class="field">
+          <label class="flbl" id="lbl-mgmt">How is it managed?</label>
+          <div class="opts" role="group" aria-labelledby="lbl-mgmt" id="grp-mgmt"></div>
+          <p class="hint">Managed = Intune/Entra enrolled · MAM = app-level only · Unmanaged = personal, no controls</p>
+        </div>
+        <div class="field">
+          <label class="flbl" id="lbl-share">Personal or shared?</label>
+          <div class="opts" role="group" aria-labelledby="lbl-share" id="grp-share"></div>
+        </div>
+      </div>
+
+      <div class="toolbar no-print">
+        <button class="btn primary" id="btn-print" type="button">🖨 Print / save one-pager</button>
+        <button class="btn" id="btn-reset" type="button">Reset choices</button>
+      </div>
+    </div>
+
+    <div class="ladder-wrap">
+      <div class="ladder" aria-hidden="false">
+        <h3 style="margin:4px 0 10px; font-size:1rem;">Your maturity ladder</h3>
+        <div id="ladder-svg"></div>
+      </div>
+      <div>
+        <div class="cards" id="cards"></div>
+        <div class="context-note" id="context-note"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== ADMIN LANE ===================== -->
+<section>
+  <div class="wrap">
+    <h2 class="sec">2 · Admins: the non-negotiable gold lane</h2>
+    <p class="sec-sub">For people with admin rights there is no "in-between." These four controls go
+      together. Anything less leaves the whole tenant exposed.</p>
+    <div class="admin-lane">
+      <h3>The four admin essentials</h3>
+      <p style="color:#d6dbe8;margin:0;">If a teacher or student account is breached, the blast radius
+        is one mailbox. If an admin account is breached, it's the whole organisation.</p>
+      <div class="gold-grid">
+        <div class="gold-card"><h4>Phishing-resistant MFA</h4><p>FIDO2 key or passkey only — no SMS, no
+          push that can be tricked or fatigued.</p></div>
+        <div class="gold-card"><h4>Just-in-time roles (PIM)</h4><p>Admin rights are switched on for a
+          task and a time window, then switched off automatically.</p></div>
+        <div class="gold-card"><h4>Separate cloud-only account</h4><p>A dedicated admin identity that
+          never reads email or browses the web — kept away from daily risk.</p></div>
+        <div class="gold-card"><h4>Privileged Access Workstation (optional)</h4><p>A clean, locked-down
+          device used only for admin work. The gold standard for the highest-risk roles.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== STUDENTS WITHOUT PHONES ===================== -->
+<section>
+  <div class="wrap">
+    <h2 class="sec">3 · "Students can't use a phone" — here's what to do instead</h2>
+    <p class="sec-sub">Phones are <em>one</em> way to do strong sign-in, not the only way. These options
+      are device-bound and phishing-resistant, and none of them need the student to own or carry a phone.</p>
+
+    <div class="grid2">
+      <div class="block">
+        <h3>The phone-free menu</h3>
+        <table class="menu-tbl">
+          <thead><tr><th>Device situation</th><th>Recommended method</th></tr></thead>
+          <tbody>
+            <tr><td>1:1 Windows device</td><td><span class="term" data-term="whfb">Windows Hello for Business</span> <span class="badge">face / PIN</span></td></tr>
+            <tr><td>1:1 Mac</td><td>Platform SSO + Secure Enclave <span class="badge">Touch ID</span></td></tr>
+            <tr><td>1:1 iPad / Android <span class="hint">(if allowed)</span></td><td>Passkey in Authenticator</td></tr>
+            <tr><td><strong>Shared</strong> Windows / Mac</td><td><span class="term" data-term="fido2">FIDO2 security key</span> <span class="badge">recommended for shared</span></td></tr>
+          </tbody>
+        </table>
+        <p class="hint" style="margin-top:12px;">First-time setup for all of these uses a
+          <span class="term" data-term="tap">Temporary Access Pass (TAP)</span> — a short code from IT.
+          No phone needed to get started.</p>
+      </div>
+
+      <div class="block">
+        <h3>Make TAP painless for IT</h3>
+        <p style="margin-top:0;color:var(--ink-soft);">The real objection is usually admin workload, not
+          technology. These cut the effort dramatically:</p>
+        <ul class="check">
+          <li><strong>TAP-only, no password</strong> — issue a TAP instead of a first password, so there's no extra step.</li>
+          <li><strong>Hand out at enrolment</strong> — generate the TAP when a device is given to the student / during Autopilot.</li>
+          <li><strong>Delegate to teachers or local IT</strong> — a scoped role lets trusted staff issue TAPs without full admin rights.</li>
+          <li><strong>Self-service trigger</strong> — student only calls IT for a TAP at first setup.</li>
+          <li><strong>Multi-use TAP with a sensible lifetime</strong> — fewer reissues across the rollout.</li>
+          <li><strong>Watch the reports</strong> — Authentication Methods Activity shows rollout progress.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="context-note" style="margin-top:16px;">
+      <b>Conditional Access ties it together:</b> require a <em>compliant device</em> and
+      <em>phishing-resistant strength</em> for student apps. For shared devices, FIDO2 keys are the
+      Microsoft-recommended method.
+    </div>
+  </div>
+</section>
+
+<!-- ===================== GLOSSARY ===================== -->
+<section>
+  <div class="wrap">
+    <h2 class="sec">4 · Plain-language glossary</h2>
+    <p class="sec-sub">Hand this to anyone who needs the jargon translated.</p>
+    <div id="glossary"></div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="disclaimer">
+      <strong>About this guide.</strong> This is independent enablement material to help education and
+      non-profit organisations have a structured conversation about sign-in security. It is not an
+      official Microsoft document. Always validate against the current Microsoft Learn guidance and your
+      own licensing.
+      <p style="margin:10px 0 0;">Primary source:
+        <a href="https://learn.microsoft.com/en-us/microsoft-365/education/guide/1-reference/protect-passwordless-students" target="_blank" rel="noopener">
+          Passwordless for Students — Microsoft 365 Education</a>.
+      </p>
+    </div>
+  </div>
+</footer>
+
+<script>
+//// ---------- DATA MODEL ----------
+const PERSONAS = [
+  { id:"staff",   label:"Non-teaching staff" },
+  { id:"teacher", label:"Teacher" },
+  { id:"student", label:"Student" },
+  { id:"admin",   label:"Admin" }
+];
+const OWNERS = [
+  { id:"company", label:"Organisation-owned" },
+  { id:"personal", label:"Personal / BYOD" }
+];
+const MGMT = [
+  { id:"managed",  label:"Managed (Intune/Entra)" },
+  { id:"mam",      label:"MAM only" },
+  { id:"unmanaged",label:"Unmanaged" }
+];
+const SHARE = [
+  { id:"single", label:"Personal to one user" },
+  { id:"shared", label:"Shared device" }
+];
+
+const LEVELS = [
+  { n:0, name:"Password only", tag:"The risk", cls:"c0" },
+  { n:1, name:"Mitigate today", tag:"Baseline", cls:"c1" },
+  { n:2, name:"Better", tag:"Stronger", cls:"c2" },
+  { n:3, name:"Best — Zero Trust", tag:"Gold", cls:"c3" }
+];
+
+// Step builders return {title, why} arrays per level for a persona/context
+function studentSteps(ctx){
+  const shared = ctx.share === "shared";
+  return {
+    0:[ {t:"Password only — no second check", w:"Easiest for attackers; one leaked password = full access."} ],
+    1:[ {t:"Block legacy/basic sign-in protocols", w:"Closes the doors that bypass MFA entirely."},
+        {t:"Conditional Access baseline for student apps", w:"Control where and how sign-in is allowed."},
+        {t:"Issue a Temporary Access Pass for first setup", w:"Lets students onboard strong sign-in with no phone."} ],
+    2:[ {t: shared ? "FIDO2 security keys on shared devices" : "Windows Hello / Platform SSO on the 1:1 device",
+         w: shared ? "Recommended for shared devices — key travels with the student." : "Face/PIN unlock bound to that specific device."},
+        {t:"Require a compliant (managed) device", w:"Only healthy, enrolled devices reach school data."} ],
+    3:[ {t:"Phishing-resistant strength enforced in Conditional Access", w:"Only passwordless, phishing-resistant sign-in is accepted."},
+        {t: shared ? "FIDO2 + shared-device sign-out hygiene" : "Passwordless-only experience (no password prompt)", w:"Removes passwords from the student journey entirely."},
+        {t:"Scope Authentication Methods (students: TAP/FIDO2)", w:"Right method for the right group; excludes SMS/phone where not wanted."} ]
+  };
+}
+function teacherSteps(ctx){
+  const mobile = ctx.owner==="personal" || ctx.mgmt!=="unmanaged";
+  return {
+    0:[ {t:"Password only", w:"Unacceptable for staff with access to student data."} ],
+    1:[ {t:"Turn on MFA (Authenticator or key)", w:"Single biggest risk reduction for staff accounts."},
+        {t:"Block legacy authentication", w:"Stops MFA bypass."} ],
+    2:[ {t:"Phishing-resistant method (passkey/FIDO2)", w:"Resists fake login pages and push fatigue."},
+        {t: ctx.mgmt==="mam" ? "Protect data with MAM app policies" : "Require compliant device", w:"Adds a device health signal to sign-in."} ],
+    3:[ {t:"Phishing-resistant strength in Conditional Access", w:"Accept only the strongest sign-in."},
+        {t:"Compliant device + risk-based policies", w:"React automatically to risky sign-ins."} ]
+  };
+}
+function staffSteps(ctx){ return teacherSteps(ctx); }
+function adminSteps(){
+  return {
+    0:[ {t:"Password only", w:"Never acceptable for admin roles."} ],
+    1:[ {t:"Phishing-resistant MFA now", w:"Admins are the top target — start at strong."} ],
+    2:[ {t:"Add PIM (just-in-time roles)", w:"No standing admin rights to steal."},
+        {t:"Separate cloud-only admin account", w:"No email/web on the privileged identity."} ],
+    3:[ {t:"Privileged Access Workstation (PAW)", w:"Clean device only for admin work — full Zero Trust."},
+        {t:"Conditional Access locked to PAW + phishing-resistant", w:"Admin access only from trusted device + method."} ]
+  };
+}
+
+function getSteps(ctx){
+  switch(ctx.persona){
+    case "student": return studentSteps(ctx);
+    case "teacher": return teacherSteps(ctx);
+    case "staff":   return staffSteps(ctx);
+    case "admin":   return adminSteps();
+  }
+}
+
+// Recommended target rung given context
+function recommendedLevel(ctx){
+  if(ctx.persona==="admin") return 3;
+  if(ctx.persona==="student"){
+    if(ctx.mgmt==="unmanaged") return 1;     // hard to go far on unmanaged
+    if(ctx.mgmt==="mam") return 2;
+    return ctx.share==="shared" ? 2 : 3;     // managed 1:1 can reach gold
+  }
+  // teacher/staff
+  if(ctx.mgmt==="unmanaged") return 2;
+  return 3;
+}
+
+function contextNote(ctx){
+  if(ctx.persona==="admin") return "Admins skip the ladder: phishing-resistant MFA + PIM + separate account + (ideally) a PAW. No in-between.";
+  if(ctx.mgmt==="unmanaged" && ctx.persona==="student")
+    return "Unmanaged devices limit how far you can go. Quick win: TAP-issued passkeys + Conditional Access. To reach the top, move these devices to managed or issue FIDO2 keys.";
+  if(ctx.mgmt==="mam")
+    return "MAM protects the apps and data without fully managing the device — a good fit for personal/BYOD. Pair it with a phishing-resistant method to climb higher.";
+  if(ctx.share==="shared")
+    return "On shared devices, FIDO2 security keys are the Microsoft-recommended method: the credential travels with the person, not the device.";
+  if(ctx.mgmt==="managed")
+    return "Managed 1:1 devices can reach the top rung: device-bound passwordless (Windows Hello / Platform SSO) plus a compliant-device requirement.";
+  return "Pick the highest rung your device situation supports today, then plan the move to managed devices to unlock the rest.";
+}
+
+//// ---------- STATE ----------
+const state = { persona:"student", owner:"company", mgmt:"managed", share:"single" };
+
+//// ---------- RENDER: option buttons ----------
+function renderOpts(groupId, items, key){
+  const grp = document.getElementById(groupId);
+  grp.innerHTML = "";
+  items.forEach(it=>{
+    const b = document.createElement("button");
+    b.type="button"; b.className="opt"; b.textContent=it.label;
+    b.setAttribute("aria-pressed", String(state[key]===it.id));
+    b.addEventListener("click", ()=>{ state[key]=it.id; renderAll(); });
+    grp.appendChild(b);
+  });
+}
+
+//// ---------- RENDER: ladder SVG ----------
+function renderLadder(rec){
+  const colors=["#c0392b","#d98324","#2f8f5b","#2156c4"];
+  const h=64, gap=10, pad=12, w=240;
+  let svg=`<svg viewBox="0 0 ${w} ${4*h+3*gap+2*pad}" role="img" aria-label="Maturity ladder, recommended level ${rec}">`;
+  for(let i=3;i>=0;i--){
+    const y=pad+(3-i)*(h+gap);
+    const isRec=i===rec;
+    const fill=colors[i];
+    svg+=`<g>
+      <rect x="${pad}" y="${y}" rx="10" width="${w-2*pad}" height="${h}"
+        fill="${fill}" opacity="${isRec?1:0.28}" />
+      <text x="${pad+14}" y="${y+26}" fill="#fff" font-size="13" font-weight="700"
+        opacity="${isRec?1:0.9}">L${i} · ${LEVELS[i].tag}</text>
+      <text x="${pad+14}" y="${y+46}" fill="#fff" font-size="12"
+        opacity="${isRec?1:0.85}">${LEVELS[i].name}</text>`;
+    if(isRec){
+      svg+=`<text x="${w-pad-12}" y="${y+30}" fill="#fff" font-size="11" text-anchor="end" font-weight="700">◀ TARGET</text>`;
+    }
+    svg+=`</g>`;
+  }
+  svg+=`</svg>`;
+  document.getElementById("ladder-svg").innerHTML=svg;
+}
+
+//// ---------- RENDER: cards ----------
+function renderCards(ctx){
+  const steps=getSteps(ctx);
+  const rec=recommendedLevel(ctx);
+  const cards=document.getElementById("cards");
+  cards.innerHTML="";
+  [0,1,2,3].forEach(l=>{
+    const lv=LEVELS[l];
+    const card=document.createElement("div");
+    card.className="card "+lv.cls+(l===rec?" recommended":"");
+    const items=(steps[l]||[]).map(s=>`<li>${s.t}<br><span class="why">${s.w}</span></li>`).join("");
+    card.innerHTML=`
+      <div class="chead">
+        <span class="lvl-tag">L${l}</span>
+        <span>${lv.name}</span>
+        ${l===rec?'<span class="rec-flag">Recommended target</span>':''}
+      </div>
+      <div class="cbody"><ul>${items}</ul></div>`;
+    cards.appendChild(card);
+  });
+  document.getElementById("context-note").innerHTML="<b>For your selection:</b> "+contextNote(ctx);
+  renderLadder(rec);
+}
+
+//// ---------- GLOSSARY ----------
+const GLOSSARY=[
+  ["MFA","Multi-factor authentication — proving who you are with more than just a password (e.g. a key, face, or PIN)."],
+  ["TAP","Temporary Access Pass — a short, time-limited code IT gives a user to set up strong sign-in. No phone required."],
+  ["FIDO2","A small physical security key that plugs in or taps. Phishing-resistant and ideal for shared devices."],
+  ["Windows Hello for Business","Signing in to a Windows device with face or a PIN that is locked to that one device."],
+  ["Conditional Access","Rules that decide when sign-in is allowed — e.g. only from a healthy, managed device."],
+  ["PIM","Privileged Identity Management — admin rights are switched on only when needed, then switched off automatically."],
+  ["PAW","Privileged Access Workstation — a clean, locked-down device used only for admin tasks."],
+  ["MAM","Mobile Application Management — protecting the apps and data on a personal device without managing the whole device."]
+];
+function renderGlossary(){
+  const g=document.getElementById("glossary");
+  g.innerHTML=GLOSSARY.map(([t,d])=>`<details class="gloss"><summary>${t}</summary><p>${d}</p></details>`).join("");
+}
+
+//// ---------- TERM TOOLTIPS ----------
+const TERMS={
+  whfb:"Windows Hello for Business: face or PIN sign-in locked to one device.",
+  fido2:"FIDO2 security key: a physical key, phishing-resistant, great for shared devices.",
+  tap:"Temporary Access Pass: a short code from IT to set up strong sign-in — no phone needed."
+};
+function wireTerms(){
+  document.querySelectorAll(".term").forEach(el=>{
+    const k=el.getAttribute("data-term");
+    if(TERMS[k]) el.title=TERMS[k];
+  });
+}
+
+//// ---------- MAIN RENDER ----------
+function renderAll(){
+  renderOpts("grp-persona", PERSONAS, "persona");
+  renderOpts("grp-owner", OWNERS, "owner");
+  renderOpts("grp-mgmt", MGMT, "mgmt");
+  renderOpts("grp-share", SHARE, "share");
+  renderCards({...state});
+}
+
+document.getElementById("btn-print").addEventListener("click",()=>window.print());
+document.getElementById("btn-reset").addEventListener("click",()=>{
+  state.persona="student"; state.owner="company"; state.mgmt="managed"; state.share="single";
+  renderAll();
+});
+
+renderGlossary();
+renderAll();
+wireTerms();
+</script>
+</body>
+</html>
