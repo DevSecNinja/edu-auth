@@ -171,6 +171,9 @@
   .gold-card { background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.18); border-radius:10px; padding:12px 14px; }
   .gold-card h4 { margin:0 0 4px; font-size:.95rem; color:#ffd66b; }
   .gold-card p { margin:0; font-size:.85rem; color:#d6dbe8; }
+  .gold-card.rec { border-style:dashed; border-color:rgba(255,214,107,.55); }
+  .rec-badge { display:inline-block; margin-left:6px; font-size:.62rem; font-weight:700; text-transform:uppercase;
+    letter-spacing:.05em; color:#1c1c2b; background:#ffd66b; border-radius:999px; padding:1px 7px; vertical-align:middle; }
 
   /* ---------- Glossary ---------- */
   details.gloss { border:1px solid var(--line); border-radius:10px; background:#fff; padding:0 14px; margin:8px 0; }
@@ -681,13 +684,13 @@ function renderResults(){
   const slot=document.getElementById("admin-lane-slot");
   slot.innerHTML = adminNeedsLane ? `
     <div class="admin-lane">
-      <h3>Admins: the four non-negotiables</h3>
+      <h3>Admins: three non-negotiables (+ one recommended)</h3>
       <p style="color:#d6dbe8;margin:0;">A breached teacher or student account exposes one mailbox. A breached admin account exposes the whole organisation.</p>
       <div class="gold-grid">
         <div class="gold-card"><h4>Phishing-resistant MFA</h4><p>FIDO2 key or passkey \u2014 never SMS or plain push.</p></div>
         <div class="gold-card"><h4>Just-in-time roles (PIM)</h4><p>Admin rights on for a task, off automatically.</p></div>
         <div class="gold-card"><h4>Separate cloud-only account</h4><p>No email or web on the privileged identity.</p></div>
-        <div class="gold-card"><h4>Privileged Access Workstation</h4><p>A clean device used only for admin work.</p></div>
+        <div class="gold-card rec"><h4>Privileged Access Workstation <span class="rec-badge">Recommended</span></h4><p>A clean device used only for admin work. Strong practice, but often optional for smaller EDU orgs.</p></div>
       </div>
     </div>` : "";
 }
