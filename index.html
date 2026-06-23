@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Zero Trust MFA Guardrails for Education &amp; Non-profit</title>
-<meta name="description" content="An actionable, non-technical guide that helps schools and non-profits choose the right MFA and Zero Trust guardrails per person and per device — including students who can't use a phone." />
+<title>Zero Trust Sign-in Assessment for Education &amp; Non-profit</title>
+<meta name="description" content="A 3-step, non-technical assessment: describe your current sign-in setup, see the risks against the Microsoft Zero Trust framework, and get prioritized mitigations with the security maturity uplift." />
 <style>
   :root {
     --bg: #f5f7fa;
@@ -14,14 +14,13 @@
     --line: #dfe5ec;
     --brand: #2156c4;
     --brand-soft: #e8f0ff;
-    --l0: #c0392b;   /* risk */
-    --l1: #d98324;   /* baseline */
-    --l2: #2f8f5b;   /* better */
-    --l3: #2156c4;   /* best/gold */
+    --risk-high: #c0392b;
+    --risk-med: #d98324;
+    --risk-low: #2f8f5b;
     --gold: #b8860b;
     --shadow: 0 1px 2px rgba(20,30,50,.06), 0 6px 20px rgba(20,30,50,.07);
     --radius: 14px;
-    --maxw: 1140px;
+    --maxw: 1160px;
   }
   * { box-sizing: border-box; }
   html { scroll-behavior: smooth; }
@@ -36,138 +35,139 @@
   a { color: var(--brand); }
   .wrap { max-width: var(--maxw); margin: 0 auto; padding: 0 20px; }
 
-  /* ---------- Header / exec banner ---------- */
+  /* ---------- Header ---------- */
   header.hero {
     background: linear-gradient(135deg, #16335f 0%, #2156c4 100%);
     color: #fff;
-    padding: 38px 0 30px;
+    padding: 34px 0 26px;
   }
-  header.hero h1 { margin: 0 0 8px; font-size: clamp(1.5rem, 3.5vw, 2.3rem); line-height: 1.15; }
-  header.hero p.lead { margin: 0; max-width: 760px; font-size: 1.05rem; color: #d6e2ff; }
-  .pill-row { display:flex; flex-wrap:wrap; gap:8px; margin-top:18px; }
-  .pill { background: rgba(255,255,255,.14); border:1px solid rgba(255,255,255,.25); color:#fff;
-    padding:5px 11px; border-radius:999px; font-size:.82rem; }
+  header.hero h1 { margin: 0 0 8px; font-size: clamp(1.5rem, 3.5vw, 2.2rem); line-height: 1.15; }
+  header.hero p.lead { margin: 0; max-width: 780px; font-size: 1.04rem; color: #d6e2ff; }
 
-  .cio-banner {
-    background: var(--brand-soft);
-    border-left: 5px solid var(--brand);
-    border-radius: 10px;
-    padding: 14px 18px;
-    margin: 22px 0 6px;
-    font-size: .98rem;
+  /* ---------- Stepper ---------- */
+  .stepper { display:flex; gap:8px; flex-wrap:wrap; margin:22px 0 0; padding:0; list-style:none; }
+  .stepper li { flex:1 1 200px; }
+  .step-btn { width:100%; text-align:left; background:var(--surface); border:1px solid var(--line);
+    border-radius:12px; padding:12px 14px; cursor:pointer; font-family:inherit; display:flex; gap:12px; align-items:center;
+    box-shadow:var(--shadow); transition:all .12s ease; }
+  .step-btn:hover { border-color:var(--brand); }
+  .step-btn[aria-current="true"] { border-color:var(--brand); background:var(--brand-soft); }
+  .step-btn .num { width:28px; height:28px; flex:none; border-radius:50%; background:var(--brand);
+    color:#fff; display:grid; place-items:center; font-weight:700; font-size:.9rem; }
+  .step-btn[aria-current="true"] .num { background:#16335f; }
+  .step-btn .st-t { font-weight:700; font-size:.95rem; display:block; }
+  .step-btn .st-s { font-size:.78rem; color:var(--ink-soft); }
+  .step-btn:disabled { opacity:.55; cursor:not-allowed; }
+
+  section.panel { padding:26px 0 8px; }
+  .panel[hidden] { display:none; }
+  h2.sec { font-size:1.3rem; margin:0 0 4px; }
+  p.sec-sub { margin:0 0 18px; color:var(--ink-soft); max-width:820px; }
+
+  /* ---------- Step 1: assessment table ---------- */
+  .assess { background:var(--surface); border:1px solid var(--line); border-radius:var(--radius);
+    box-shadow:var(--shadow); overflow:hidden; }
+  .assess-head, .assess-row { display:grid; grid-template-columns: 1.1fr 1fr 1.2fr 1fr 1.3fr; gap:0; }
+  .assess-head { background:#16335f; color:#fff; }
+  .assess-head > div { padding:11px 12px; font-size:.74rem; text-transform:uppercase; letter-spacing:.04em; font-weight:700; }
+  .assess-row { border-top:1px solid var(--line); }
+  .assess-row > div { padding:12px; border-left:1px solid var(--line); }
+  .assess-row > div:first-child { border-left:none; }
+  .assess-row .who { font-weight:700; display:flex; flex-direction:column; gap:2px; }
+  .assess-row .who small { font-weight:400; color:var(--ink-soft); font-size:.76rem; }
+  .seg { display:flex; flex-direction:column; gap:5px; }
+  .seg button { text-align:left; border:1px solid var(--line); background:#fff; color:var(--ink);
+    border-radius:8px; padding:6px 9px; font-size:.83rem; cursor:pointer; font-family:inherit; }
+  .seg button:hover { border-color:var(--brand); }
+  .seg button[aria-pressed="true"] { background:var(--brand); border-color:var(--brand); color:#fff; font-weight:600; }
+  .seg button:focus-visible { outline:3px solid #ffbf47; outline-offset:2px; }
+  @media (max-width: 820px){
+    .assess-head { display:none; }
+    .assess-row { grid-template-columns:1fr 1fr; }
+    .assess-row > div { border-left:none; border-top:1px solid var(--line); }
+    .assess-row .who { grid-column:1 / -1; border-top:none; }
+    .seg::before { content:attr(data-label); display:block; font-size:.7rem; text-transform:uppercase;
+      letter-spacing:.04em; color:var(--ink-soft); margin-bottom:4px; font-weight:700; }
   }
-  .cio-banner strong { color: #16335f; }
 
-  section { padding: 30px 0; }
-  h2.sec { font-size: 1.35rem; margin: 0 0 4px; }
-  p.sec-sub { margin: 0 0 20px; color: var(--ink-soft); max-width: 760px; }
+  .actions-row { display:flex; gap:10px; flex-wrap:wrap; margin-top:16px; }
+  .btn { font-family:inherit; cursor:pointer; border-radius:10px; padding:10px 16px; font-size:.92rem;
+    border:1px solid var(--brand); background:#fff; color:var(--brand); font-weight:600; }
+  .btn.primary { background:var(--brand); color:#fff; }
+  .btn:focus-visible { outline:3px solid #ffbf47; outline-offset:2px; }
+  .btn:disabled { opacity:.5; cursor:not-allowed; }
 
-  /* ---------- Selector ---------- */
-  .selector {
-    background: var(--surface);
-    border: 1px solid var(--line);
-    border-radius: var(--radius);
-    box-shadow: var(--shadow);
-    padding: 20px;
-  }
-  .field-grid { display:grid; gap:18px; grid-template-columns: repeat(auto-fit, minmax(210px,1fr)); }
-  .field > label.flbl { display:block; font-weight:600; font-size:.82rem; text-transform:uppercase;
-    letter-spacing:.04em; color:var(--ink-soft); margin-bottom:8px; }
-  .opts { display:flex; flex-wrap:wrap; gap:8px; }
-  .opt {
-    border:1px solid var(--line); background:#fff; color:var(--ink);
-    border-radius:10px; padding:8px 12px; font-size:.9rem; cursor:pointer;
-    transition: all .12s ease; font-family:inherit;
-  }
-  .opt:hover { border-color: var(--brand); }
-  .opt[aria-pressed="true"] {
-    background: var(--brand); border-color: var(--brand); color:#fff; font-weight:600;
-  }
-  .opt:focus-visible { outline:3px solid #ffbf47; outline-offset:2px; }
-  .hint { font-size:.78rem; color:var(--ink-soft); margin-top:6px; }
+  /* ---------- Framework banner ---------- */
+  .fw { background:var(--brand-soft); border-left:5px solid var(--brand); border-radius:10px;
+    padding:14px 18px; margin:0 0 20px; font-size:.95rem; }
+  .fw b { color:#16335f; }
+  .fw .principles { display:flex; gap:8px; flex-wrap:wrap; margin-top:8px; }
+  .fw .principles span { background:#fff; border:1px solid var(--line); border-radius:999px; padding:3px 10px; font-size:.82rem; }
 
-  /* ---------- Ladder ---------- */
-  .ladder-wrap { margin-top:26px; display:grid; gap:22px; grid-template-columns: 280px 1fr; }
-  @media (max-width: 860px){ .ladder-wrap { grid-template-columns: 1fr; } }
-  .ladder { background:var(--surface); border:1px solid var(--line); border-radius:var(--radius);
-    box-shadow:var(--shadow); padding:14px; }
-  .ladder svg { width:100%; height:auto; display:block; }
+  /* ---------- Risk / result cards ---------- */
+  .grid { display:grid; gap:14px; grid-template-columns:repeat(auto-fit,minmax(340px,1fr)); }
+  .rcard { background:var(--surface); border:1px solid var(--line); border-radius:var(--radius);
+    box-shadow:var(--shadow); overflow:hidden; }
+  .rcard .rhead { padding:13px 16px; color:#fff; display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+  .rhead.high { background:var(--risk-high); } .rhead.med { background:var(--risk-med); } .rhead.low { background:var(--risk-low); }
+  .rhead .who { font-weight:700; font-size:1.02rem; }
+  .rhead .risk-pill { margin-left:auto; background:rgba(255,255,255,.22); border-radius:999px; padding:3px 10px; font-size:.78rem; font-weight:700; }
+  .stage-line { display:flex; align-items:center; gap:8px; font-size:.86rem; padding:10px 16px; background:#fbfcfe; border-bottom:1px solid var(--line); }
+  .stage-chip { border-radius:999px; padding:2px 10px; font-size:.78rem; font-weight:700; border:1px solid var(--line); }
+  .stage-trad { background:#fdecea; color:#a02d1c; border-color:#e6a59c; }
+  .stage-adv { background:#fff5e6; color:#8a6d1a; border-color:#f0d98a; }
+  .stage-opt { background:#eaf7ef; color:#1f7a47; border-color:#a7d8bd; }
+  .rbody { padding:14px 16px; }
+  .rbody h4 { margin:0 0 6px; font-size:.82rem; text-transform:uppercase; letter-spacing:.04em; color:var(--ink-soft); }
+  .findings { list-style:none; padding:0; margin:0 0 6px; }
+  .findings li { padding-left:24px; position:relative; margin:7px 0; font-size:.92rem; }
+  .findings li.bad::before { content:"\2715"; color:var(--risk-high); font-weight:700; position:absolute; left:0; }
+  .findings li.warn::before { content:"!"; color:var(--risk-med); font-weight:800; position:absolute; left:2px; }
+  .findings li.good::before { content:"\2713"; color:var(--risk-low); font-weight:700; position:absolute; left:0; }
+  .findings li .pillar { color:var(--ink-soft); font-size:.78rem; }
 
-  /* ---------- Result cards ---------- */
-  .cards { display:grid; gap:14px; }
-  .card {
-    background:var(--surface); border:1px solid var(--line); border-radius:var(--radius);
-    box-shadow:var(--shadow); overflow:hidden;
-  }
-  .card .chead { padding:12px 16px; display:flex; align-items:center; gap:10px;
-    color:#fff; font-weight:600; }
-  .card .cbody { padding:14px 16px; }
-  .card .cbody ul { margin:0; padding-left:18px; }
-  .card .cbody li { margin:5px 0; }
-  .card .cbody li .why { color:var(--ink-soft); font-size:.86rem; }
-  .lvl-tag { font-size:.72rem; text-transform:uppercase; letter-spacing:.05em;
-    background:rgba(255,255,255,.22); padding:2px 8px; border-radius:999px; }
-  .c0 .chead{ background:var(--l0);} .c1 .chead{ background:var(--l1);}
-  .c2 .chead{ background:var(--l2);} .c3 .chead{ background:var(--l3);}
-  .recommended { outline:3px solid var(--gold); }
-  .rec-flag { display:inline-block; background:var(--gold); color:#fff; font-size:.72rem;
-    padding:2px 8px; border-radius:999px; margin-left:auto; }
+  /* ---------- Step 3 mitigations ---------- */
+  .mcard { background:var(--surface); border:1px solid var(--line); border-radius:var(--radius);
+    box-shadow:var(--shadow); overflow:hidden; }
+  .mcard .mhead { padding:13px 16px; background:#16335f; color:#fff; display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+  .mcard .mhead .who { font-weight:700; }
+  .uplift { margin-left:auto; font-size:.8rem; background:rgba(255,255,255,.16); padding:3px 10px; border-radius:999px; }
+  .mbody { padding:6px 16px 14px; }
+  .step-item { border-bottom:1px solid var(--line); padding:12px 0; display:flex; gap:12px; }
+  .step-item:last-child { border-bottom:none; }
+  .step-item .pri { flex:none; width:26px; height:26px; border-radius:50%; background:var(--brand-soft);
+    color:var(--brand); display:grid; place-items:center; font-weight:700; font-size:.85rem; }
+  .step-item .stxt { font-size:.93rem; }
+  .step-item .stxt .why { display:block; color:var(--ink-soft); font-size:.83rem; margin-top:2px; }
+  .step-item .lift { display:inline-block; margin-top:4px; font-size:.74rem; font-weight:700; color:#1f7a47;
+    background:#eaf7ef; border:1px solid #a7d8bd; border-radius:999px; padding:1px 8px; }
+  .note { border-radius:10px; padding:12px 14px; margin:12px 16px 16px; font-size:.9rem; }
+  .note.info { background:#fff8e6; border:1px solid #f0d98a; }
+  .note.info b { color:#8a6d1a; }
 
-  .context-note { background:#fff8e6; border:1px solid #f0d98a; border-radius:10px;
-    padding:12px 14px; margin-top:14px; font-size:.92rem; }
-  .context-note b { color:#8a6d1a; }
-
-  /* ---------- Admin lane ---------- */
+  /* ---------- Admin lane / generic ---------- */
   .admin-lane { background:linear-gradient(135deg,#1c1c2b,#2a2a44); color:#fff;
-    border-radius:var(--radius); padding:22px; box-shadow:var(--shadow); }
+    border-radius:var(--radius); padding:20px; box-shadow:var(--shadow); margin-top:18px; }
   .admin-lane h3 { margin:0 0 6px; }
-  .admin-lane .gold-grid { display:grid; gap:12px; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); margin-top:14px; }
-  .gold-card { background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.18);
-    border-radius:10px; padding:12px 14px; }
-  .gold-card h4 { margin:0 0 4px; font-size:.98rem; color:#ffd66b; }
-  .gold-card p { margin:0; font-size:.88rem; color:#d6dbe8; }
-
-  /* ---------- Generic info blocks ---------- */
-  .grid2 { display:grid; gap:16px; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); }
-  .block { background:var(--surface); border:1px solid var(--line); border-radius:var(--radius);
-    box-shadow:var(--shadow); padding:18px; }
-  .block h3 { margin:0 0 8px; }
-  .check { list-style:none; padding:0; margin:0; }
-  .check li { padding-left:26px; position:relative; margin:8px 0; }
-  .check li::before { content:"✓"; position:absolute; left:0; top:0; color:var(--l2);
-    font-weight:700; }
-  .menu-tbl { width:100%; border-collapse:collapse; font-size:.92rem; }
-  .menu-tbl th, .menu-tbl td { text-align:left; padding:8px 10px; border-bottom:1px solid var(--line); vertical-align:top; }
-  .menu-tbl th { color:var(--ink-soft); font-size:.78rem; text-transform:uppercase; letter-spacing:.04em; }
-  .badge { display:inline-block; background:var(--brand-soft); color:var(--brand);
-    border-radius:6px; padding:1px 7px; font-size:.78rem; font-weight:600; }
+  .gold-grid { display:grid; gap:12px; grid-template-columns:repeat(auto-fit,minmax(210px,1fr)); margin-top:12px; }
+  .gold-card { background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.18); border-radius:10px; padding:12px 14px; }
+  .gold-card h4 { margin:0 0 4px; font-size:.95rem; color:#ffd66b; }
+  .gold-card p { margin:0; font-size:.85rem; color:#d6dbe8; }
 
   /* ---------- Glossary ---------- */
-  .term { border-bottom:1px dotted var(--brand); cursor:help; }
   details.gloss { border:1px solid var(--line); border-radius:10px; background:#fff; padding:0 14px; margin:8px 0; }
   details.gloss summary { cursor:pointer; font-weight:600; padding:12px 0; }
   details.gloss p { margin:0 0 12px; color:var(--ink-soft); }
 
-  footer { padding:30px 0 50px; color:var(--ink-soft); font-size:.86rem; }
-  footer a { color:var(--brand); }
-  .disclaimer { background:#fff; border:1px solid var(--line); border-radius:10px; padding:14px 16px; margin-top:12px; }
+  footer { padding:26px 0 50px; color:var(--ink-soft); font-size:.86rem; }
+  .disclaimer { background:#fff; border:1px solid var(--line); border-radius:10px; padding:14px 16px; }
 
-  .toolbar { display:flex; gap:10px; flex-wrap:wrap; margin-top:14px; }
-  .btn { font-family:inherit; cursor:pointer; border-radius:10px; padding:9px 14px; font-size:.9rem;
-    border:1px solid var(--brand); background:#fff; color:var(--brand); font-weight:600; }
-  .btn.primary { background:var(--brand); color:#fff; }
-  .btn:focus-visible { outline:3px solid #ffbf47; outline-offset:2px; }
-
-  /* ---------- Print ---------- */
   @media print {
-    header.hero { background:#16335f !important; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
-    .selector, .toolbar, .pill-row, details.gloss summary::-webkit-details-marker { box-shadow:none; }
     .no-print { display:none !important; }
+    header.hero { background:#16335f !important; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
     body { background:#fff; }
-    section { padding:14px 0; }
-    .card, .block, .admin-lane, .ladder { break-inside:avoid; box-shadow:none; }
-    details.gloss[open] summary { font-weight:700; }
-    details.gloss { break-inside:avoid; }
+    .panel[hidden] { display:block !important; }
+    .rcard,.mcard,.assess,.admin-lane,details.gloss { break-inside:avoid; box-shadow:none; }
     a[href^="http"]::after { content:" (" attr(href) ")"; font-size:.7rem; color:#666; }
   }
 </style>
@@ -175,386 +175,430 @@
 <body>
 <header class="hero">
   <div class="wrap">
-    <h1>Zero Trust sign-in guardrails for schools &amp; non-profits</h1>
-    <p class="lead">Pick who is signing in and what device they use. Get a clear, jargon-light path
-      from "password only" to phishing-resistant sign-in — including students who don't have a phone
-      or can't use one in class.</p>
-    <div class="pill-row">
-      <span class="pill">No phone required for students</span>
-      <span class="pill">Good → Better → Best</span>
-      <span class="pill">For CIOs &amp; IT managers</span>
-      <span class="pill">Works with managed, MAM &amp; unmanaged devices</span>
-    </div>
+    <h1>Zero Trust sign-in assessment for schools &amp; non-profits</h1>
+    <p class="lead">Describe your current setup in three minutes. See where it sits against the
+      Microsoft Zero Trust framework, the real-world risks, and the concrete steps that lower risk &mdash;
+      including students who can't use a phone.</p>
+    <ol class="stepper" id="stepper">
+      <li><button class="step-btn" data-step="1" aria-current="true">
+        <span class="num">1</span><span><span class="st-t">Your current setup</span><span class="st-s">Tell us how people sign in today</span></span></button></li>
+      <li><button class="step-btn" data-step="2" disabled>
+        <span class="num">2</span><span><span class="st-t">Your risks</span><span class="st-s">Mapped to Zero Trust</span></span></button></li>
+      <li><button class="step-btn" data-step="3" disabled>
+        <span class="num">3</span><span><span class="st-t">Mitigate &amp; mature</span><span class="st-s">What to do and the uplift</span></span></button></li>
+    </ol>
   </div>
 </header>
 
-<div class="wrap">
-  <div class="cio-banner">
-    <strong>Why this matters:</strong> stolen passwords are the #1 way attackers get into school and
-    charity tenants. "We can't do MFA for students" usually means <em>password-only</em> — the weakest
-    option. There is always a step you can take today. This tool shows the next realistic step for each
-    group of people, not an all-or-nothing leap.
-  </div>
-</div>
-
-<!-- ===================== INTERACTIVE SELECTOR ===================== -->
-<section>
+<!-- ===================== STEP 1 ===================== -->
+<section class="panel" id="panel-1">
   <div class="wrap">
-    <h2 class="sec">1 · Choose the person and their device</h2>
-    <p class="sec-sub">Everyone shares the same destination — <strong>phishing-resistant sign-in</strong>.
-      Only the steps to get there change depending on the device.</p>
+    <h2 class="sec">Step 1 &middot; Describe your current setup</h2>
+    <p class="sec-sub">For each group of people, pick how they sign in today and the device they use.
+      Set only the rows that apply to you &mdash; leave the rest as they are.</p>
 
-    <div class="selector">
-      <div class="field-grid">
-        <div class="field">
-          <label class="flbl" id="lbl-persona">Who is signing in?</label>
-          <div class="opts" role="group" aria-labelledby="lbl-persona" id="grp-persona"></div>
-        </div>
-        <div class="field">
-          <label class="flbl" id="lbl-owner">Who owns the device?</label>
-          <div class="opts" role="group" aria-labelledby="lbl-owner" id="grp-owner"></div>
-        </div>
-        <div class="field">
-          <label class="flbl" id="lbl-mgmt">How is it managed?</label>
-          <div class="opts" role="group" aria-labelledby="lbl-mgmt" id="grp-mgmt"></div>
-          <p class="hint">Managed = Intune/Entra enrolled · MAM = app-level only · Unmanaged = personal, no controls</p>
-        </div>
-        <div class="field">
-          <label class="flbl" id="lbl-share">Personal or shared?</label>
-          <div class="opts" role="group" aria-labelledby="lbl-share" id="grp-share"></div>
-        </div>
+    <div class="assess">
+      <div class="assess-head">
+        <div>People</div><div>Sign-in today</div><div>Device owner &amp; mgmt</div><div>Personal / shared</div><div>Current method detail</div>
       </div>
-
-      <div class="toolbar no-print">
-        <button class="btn primary" id="btn-print" type="button">🖨 Print / save one-pager</button>
-        <button class="btn" id="btn-reset" type="button">Reset choices</button>
-      </div>
+      <div id="assess-rows"></div>
     </div>
 
-    <div class="ladder-wrap">
-      <div class="ladder" aria-hidden="false">
-        <h3 style="margin:4px 0 10px; font-size:1rem;">Your maturity ladder</h3>
-        <div id="ladder-svg"></div>
-      </div>
-      <div>
-        <div class="cards" id="cards"></div>
-        <div class="context-note" id="context-note"></div>
-      </div>
+    <div class="actions-row no-print">
+      <button class="btn primary" id="to-step-2" type="button">See my risks &rarr;</button>
+      <button class="btn" id="reset-1" type="button">Reset</button>
     </div>
   </div>
 </section>
 
-<!-- ===================== ADMIN LANE ===================== -->
-<section>
+<!-- ===================== STEP 2 ===================== -->
+<section class="panel" id="panel-2" hidden>
   <div class="wrap">
-    <h2 class="sec">2 · Admins: the non-negotiable gold lane</h2>
-    <p class="sec-sub">For people with admin rights there is no "in-between." These four controls go
-      together. Anything less leaves the whole tenant exposed.</p>
-    <div class="admin-lane">
-      <h3>The four admin essentials</h3>
-      <p style="color:#d6dbe8;margin:0;">If a teacher or student account is breached, the blast radius
-        is one mailbox. If an admin account is breached, it's the whole organisation.</p>
-      <div class="gold-grid">
-        <div class="gold-card"><h4>Phishing-resistant MFA</h4><p>FIDO2 key or passkey only — no SMS, no
-          push that can be tricked or fatigued.</p></div>
-        <div class="gold-card"><h4>Just-in-time roles (PIM)</h4><p>Admin rights are switched on for a
-          task and a time window, then switched off automatically.</p></div>
-        <div class="gold-card"><h4>Separate cloud-only account</h4><p>A dedicated admin identity that
-          never reads email or browses the web — kept away from daily risk.</p></div>
-        <div class="gold-card"><h4>Privileged Access Workstation (optional)</h4><p>A clean, locked-down
-          device used only for admin work. The gold standard for the highest-risk roles.</p></div>
+    <h2 class="sec">Step 2 &middot; Your risks against the Zero Trust framework</h2>
+    <p class="sec-sub">Each group is scored on the three Microsoft Zero Trust principles and placed on the
+      Zero Trust maturity scale.</p>
+
+    <div class="fw">
+      <b>Framework:</b> Microsoft Zero Trust. Three guiding principles, three maturity stages.
+      <div class="principles">
+        <span><b>Verify explicitly</b> &mdash; strong sign-in every time</span>
+        <span><b>Least privilege</b> &mdash; only the access needed</span>
+        <span><b>Assume breach</b> &mdash; verify device health, limit blast radius</span>
       </div>
+      <div class="principles" style="margin-top:6px;">
+        <span class="stage-chip stage-trad">Traditional</span>
+        <span class="stage-chip stage-adv">Advanced</span>
+        <span class="stage-chip stage-opt">Optimal</span>
+      </div>
+    </div>
+
+    <div class="grid" id="risk-cards"></div>
+
+    <div class="actions-row no-print">
+      <button class="btn" id="back-1" type="button">&larr; Edit setup</button>
+      <button class="btn primary" id="to-step-3" type="button">How do I lower this risk? &rarr;</button>
     </div>
   </div>
 </section>
 
-<!-- ===================== STUDENTS WITHOUT PHONES ===================== -->
-<section>
+<!-- ===================== STEP 3 ===================== -->
+<section class="panel" id="panel-3" hidden>
   <div class="wrap">
-    <h2 class="sec">3 · "Students can't use a phone" — here's what to do instead</h2>
-    <p class="sec-sub">Phones are <em>one</em> way to do strong sign-in, not the only way. These options
-      are device-bound and phishing-resistant, and none of them need the student to own or carry a phone.</p>
+    <h2 class="sec">Step 3 &middot; Mitigate the risk and raise your maturity</h2>
+    <p class="sec-sub">Prioritised, plain-language steps for each group. Each one shows the maturity jump it
+      delivers. Start at the top.</p>
 
-    <div class="grid2">
-      <div class="block">
-        <h3>The phone-free menu</h3>
-        <table class="menu-tbl">
-          <thead><tr><th>Device situation</th><th>Recommended method</th></tr></thead>
-          <tbody>
-            <tr><td>1:1 Windows device</td><td><span class="term" data-term="whfb">Windows Hello for Business</span> <span class="badge">face / PIN</span></td></tr>
-            <tr><td>1:1 Mac</td><td>Platform SSO + Secure Enclave <span class="badge">Touch ID</span></td></tr>
-            <tr><td>1:1 iPad / Android <span class="hint">(if allowed)</span></td><td>Passkey in Authenticator</td></tr>
-            <tr><td><strong>Shared</strong> Windows / Mac</td><td><span class="term" data-term="fido2">FIDO2 security key</span> <span class="badge">recommended for shared</span></td></tr>
-          </tbody>
-        </table>
-        <p class="hint" style="margin-top:12px;">First-time setup for all of these uses a
-          <span class="term" data-term="tap">Temporary Access Pass (TAP)</span> — a short code from IT.
-          No phone needed to get started.</p>
-      </div>
+    <div class="grid" id="mitigation-cards"></div>
 
-      <div class="block">
-        <h3>Make TAP painless for IT</h3>
-        <p style="margin-top:0;color:var(--ink-soft);">The real objection is usually admin workload, not
-          technology. These cut the effort dramatically:</p>
-        <ul class="check">
-          <li><strong>TAP-only, no password</strong> — issue a TAP instead of a first password, so there's no extra step.</li>
-          <li><strong>Hand out at enrolment</strong> — generate the TAP when a device is given to the student / during Autopilot.</li>
-          <li><strong>Delegate to teachers or local IT</strong> — a scoped role lets trusted staff issue TAPs without full admin rights.</li>
-          <li><strong>Self-service trigger</strong> — student only calls IT for a TAP at first setup.</li>
-          <li><strong>Multi-use TAP with a sensible lifetime</strong> — fewer reissues across the rollout.</li>
-          <li><strong>Watch the reports</strong> — Authentication Methods Activity shows rollout progress.</li>
-        </ul>
-      </div>
-    </div>
+    <div id="admin-lane-slot"></div>
 
-    <div class="context-note" style="margin-top:16px;">
-      <b>Conditional Access ties it together:</b> require a <em>compliant device</em> and
-      <em>phishing-resistant strength</em> for student apps. For shared devices, FIDO2 keys are the
-      Microsoft-recommended method.
+    <div class="actions-row no-print" style="margin-top:18px;">
+      <button class="btn" id="back-2" type="button">&larr; Back to risks</button>
+      <button class="btn primary" id="print-report" type="button">&#128424; Print / save the report</button>
     </div>
   </div>
 </section>
 
 <!-- ===================== GLOSSARY ===================== -->
-<section>
+<section class="panel" style="padding-top:10px;">
   <div class="wrap">
-    <h2 class="sec">4 · Plain-language glossary</h2>
-    <p class="sec-sub">Hand this to anyone who needs the jargon translated.</p>
+    <h2 class="sec">Plain-language glossary</h2>
     <div id="glossary"></div>
+    <footer>
+      <div class="disclaimer">
+        <strong>About this guide.</strong> Independent enablement material to structure a Zero Trust
+        sign-in conversation for education and non-profit organisations. Not an official Microsoft
+        document &mdash; validate against current Microsoft Learn guidance and your licensing. Primary source:
+        <a href="https://learn.microsoft.com/en-us/microsoft-365/education/guide/1-reference/protect-passwordless-students" target="_blank" rel="noopener">Passwordless for Students &mdash; Microsoft 365 Education</a>,
+        and the <a href="https://learn.microsoft.com/en-us/security/zero-trust/zero-trust-overview" target="_blank" rel="noopener">Microsoft Zero Trust framework</a>.
+      </div>
+    </footer>
   </div>
 </section>
 
-<footer>
-  <div class="wrap">
-    <div class="disclaimer">
-      <strong>About this guide.</strong> This is independent enablement material to help education and
-      non-profit organisations have a structured conversation about sign-in security. It is not an
-      official Microsoft document. Always validate against the current Microsoft Learn guidance and your
-      own licensing.
-      <p style="margin:10px 0 0;">Primary source:
-        <a href="https://learn.microsoft.com/en-us/microsoft-365/education/guide/1-reference/protect-passwordless-students" target="_blank" rel="noopener">
-          Passwordless for Students — Microsoft 365 Education</a>.
-      </p>
-    </div>
-  </div>
-</footer>
-
 <script>
-//// ---------- DATA MODEL ----------
+//// ---------- MODEL ----------
 const PERSONAS = [
-  { id:"staff",   label:"Non-teaching staff" },
-  { id:"teacher", label:"Teacher" },
-  { id:"student", label:"Student" },
-  { id:"admin",   label:"Admin" }
+  { id:"admin",   label:"Admins", sub:"IT / global / Entra admins" },
+  { id:"staff",   label:"Non-teaching staff", sub:"Office, finance, HR" },
+  { id:"teacher", label:"Teachers", sub:"Faculty / educators" },
+  { id:"student", label:"Students", sub:"Pupils / learners" }
 ];
-const OWNERS = [
-  { id:"company", label:"Organisation-owned" },
-  { id:"personal", label:"Personal / BYOD" }
+
+const AUTH = [
+  { id:"password", label:"Password only" },
+  { id:"weakmfa",  label:"SMS / phone-call code" },
+  { id:"appmfa",   label:"Authenticator app" },
+  { id:"phishres", label:"Passwordless / security key" }
 ];
-const MGMT = [
-  { id:"managed",  label:"Managed (Intune/Entra)" },
-  { id:"mam",      label:"MAM only" },
-  { id:"unmanaged",label:"Unmanaged" }
+const OWNERMGMT = [
+  { id:"company-managed",   label:"Org-owned \u00b7 managed" },
+  { id:"company-mam",       label:"Org-owned \u00b7 MAM only" },
+  { id:"company-unmanaged", label:"Org-owned \u00b7 unmanaged" },
+  { id:"personal-mam",      label:"Personal \u00b7 MAM only" },
+  { id:"personal-unmanaged",label:"Personal \u00b7 unmanaged" }
 ];
 const SHARE = [
-  { id:"single", label:"Personal to one user" },
+  { id:"single", label:"Used by one person" },
   { id:"shared", label:"Shared device" }
 ];
 
-const LEVELS = [
-  { n:0, name:"Password only", tag:"The risk", cls:"c0" },
-  { n:1, name:"Mitigate today", tag:"Baseline", cls:"c1" },
-  { n:2, name:"Better", tag:"Stronger", cls:"c2" },
-  { n:3, name:"Best — Zero Trust", tag:"Gold", cls:"c3" }
-];
+// Default starting state reflects the common "EDU reality"
+const state = {
+  admin:   { auth:"appmfa",   own:"company-managed",    share:"single" },
+  staff:   { auth:"appmfa",   own:"company-managed",    share:"single" },
+  teacher: { auth:"weakmfa",  own:"company-mam",        share:"single" },
+  student: { auth:"password", own:"company-unmanaged",  share:"shared" }
+};
 
-// Step builders return {title, why} arrays per level for a persona/context
-function studentSteps(ctx){
-  const shared = ctx.share === "shared";
-  return {
-    0:[ {t:"Password only — no second check", w:"Easiest for attackers; one leaked password = full access."} ],
-    1:[ {t:"Block legacy/basic sign-in protocols", w:"Closes the doors that bypass MFA entirely."},
-        {t:"Conditional Access baseline for student apps", w:"Control where and how sign-in is allowed."},
-        {t:"Issue a Temporary Access Pass for first setup", w:"Lets students onboard strong sign-in with no phone."} ],
-    2:[ {t: shared ? "FIDO2 security keys on shared devices" : "Windows Hello / Platform SSO on the 1:1 device",
-         w: shared ? "Recommended for shared devices — key travels with the student." : "Face/PIN unlock bound to that specific device."},
-        {t:"Require a compliant (managed) device", w:"Only healthy, enrolled devices reach school data."} ],
-    3:[ {t:"Phishing-resistant strength enforced in Conditional Access", w:"Only passwordless, phishing-resistant sign-in is accepted."},
-        {t: shared ? "FIDO2 + shared-device sign-out hygiene" : "Passwordless-only experience (no password prompt)", w:"Removes passwords from the student journey entirely."},
-        {t:"Scope Authentication Methods (students: TAP/FIDO2)", w:"Right method for the right group; excludes SMS/phone where not wanted."} ]
-  };
-}
-function teacherSteps(ctx){
-  const mobile = ctx.owner==="personal" || ctx.mgmt!=="unmanaged";
-  return {
-    0:[ {t:"Password only", w:"Unacceptable for staff with access to student data."} ],
-    1:[ {t:"Turn on MFA (Authenticator or key)", w:"Single biggest risk reduction for staff accounts."},
-        {t:"Block legacy authentication", w:"Stops MFA bypass."} ],
-    2:[ {t:"Phishing-resistant method (passkey/FIDO2)", w:"Resists fake login pages and push fatigue."},
-        {t: ctx.mgmt==="mam" ? "Protect data with MAM app policies" : "Require compliant device", w:"Adds a device health signal to sign-in."} ],
-    3:[ {t:"Phishing-resistant strength in Conditional Access", w:"Accept only the strongest sign-in."},
-        {t:"Compliant device + risk-based policies", w:"React automatically to risky sign-ins."} ]
-  };
-}
-function staffSteps(ctx){ return teacherSteps(ctx); }
-function adminSteps(){
-  return {
-    0:[ {t:"Password only", w:"Never acceptable for admin roles."} ],
-    1:[ {t:"Phishing-resistant MFA now", w:"Admins are the top target — start at strong."} ],
-    2:[ {t:"Add PIM (just-in-time roles)", w:"No standing admin rights to steal."},
-        {t:"Separate cloud-only admin account", w:"No email/web on the privileged identity."} ],
-    3:[ {t:"Privileged Access Workstation (PAW)", w:"Clean device only for admin work — full Zero Trust."},
-        {t:"Conditional Access locked to PAW + phishing-resistant", w:"Admin access only from trusted device + method."} ]
-  };
-}
+//// ---------- SCORING ----------
+const AUTH_SCORE = { password:0, weakmfa:1, appmfa:2, phishres:3 };
+function ownerOf(own){ return own.split("-")[0]; }   // company | personal
+function mgmtOf(own){ return own.split("-")[1]; }     // managed | mam | unmanaged
+const MGMT_SCORE = { managed:2, mam:1, unmanaged:0 };
 
-function getSteps(ctx){
-  switch(ctx.persona){
-    case "student": return studentSteps(ctx);
-    case "teacher": return teacherSteps(ctx);
-    case "staff":   return staffSteps(ctx);
-    case "admin":   return adminSteps();
+function identityScore(s){ return AUTH_SCORE[s.auth]; }       // 0..3
+function deviceScore(s){ return MGMT_SCORE[mgmtOf(s.own)]; }  // 0..2
+
+// Maturity stage: traditional | advanced | optimal
+function stage(s){
+  const i = identityScore(s), d = deviceScore(s);
+  if(i>=3 && d>=2) return "optimal";
+  if(i>=2 && d>=1) return "advanced";
+  return "traditional";
+}
+const STAGE_INFO = {
+  traditional: { label:"Traditional", chip:"stage-trad", order:0 },
+  advanced:    { label:"Advanced",    chip:"stage-adv",  order:1 },
+  optimal:     { label:"Optimal",     chip:"stage-opt",  order:2 }
+};
+
+// Risk level: high | med | low
+function riskLevel(persona, s){
+  const i = identityScore(s), st = stage(s);
+  if(persona==="admin"){
+    return st==="optimal" ? "low" : "high"; // admins: anything below optimal is high risk
   }
+  if(i<=1) return "high";              // password or SMS = high
+  if(st==="optimal") return "low";
+  return "med";
 }
+const RISK_INFO = {
+  high:{ label:"High risk", cls:"high" },
+  med: { label:"Medium risk", cls:"med" },
+  low: { label:"Low risk", cls:"low" }
+};
 
-// Recommended target rung given context
-function recommendedLevel(ctx){
-  if(ctx.persona==="admin") return 3;
-  if(ctx.persona==="student"){
-    if(ctx.mgmt==="unmanaged") return 1;     // hard to go far on unmanaged
-    if(ctx.mgmt==="mam") return 2;
-    return ctx.share==="shared" ? 2 : 3;     // managed 1:1 can reach gold
+//// ---------- FINDINGS (mapped to ZT principles) ----------
+function findings(persona, s){
+  const out=[];
+  const i = identityScore(s);
+  const mgmt = mgmtOf(s.own), owner = ownerOf(s.own);
+
+  // Verify explicitly (identity)
+  if(i===0) out.push({k:"bad", t:"Password only \u2014 a single leaked password grants full access.", p:"Verify explicitly"});
+  else if(i===1) out.push({k:"warn", t:"SMS / call codes can be intercepted or SIM-swapped, and don't resist phishing.", p:"Verify explicitly"});
+  else if(i===2) out.push({k:"warn", t:"App MFA is good, but push prompts can still be phished or fatigued.", p:"Verify explicitly"});
+  else out.push({k:"good", t:"Phishing-resistant sign-in in place \u2014 the gold standard.", p:"Verify explicitly"});
+
+  // Assume breach (device)
+  if(mgmt==="unmanaged") out.push({k:"bad", t:"Device health isn't verified \u2014 a compromised device reaches your data unchecked.", p:"Assume breach"});
+  else if(mgmt==="mam") out.push({k:"warn", t:"App-level (MAM) protection only \u2014 the device itself isn't proven healthy.", p:"Assume breach"});
+  else out.push({k:"good", t:"Managed device provides health/compliance signals to sign-in.", p:"Assume breach"});
+
+  // Least privilege
+  if(persona==="admin"){
+    if(owner!=="company" || mgmt!=="managed" || s.share==="shared")
+      out.push({k:"bad", t:"Admin work from a personal, MAM-only, unmanaged or shared device hugely widens the blast radius.", p:"Least privilege"});
+    else
+      out.push({k:"warn", t:"Confirm admin rights are just-in-time (PIM) on a separate cloud-only account.", p:"Least privilege"});
+  } else if(s.share==="shared"){
+    out.push({k:"warn", t:"Shared device \u2014 tie the credential to the person (security key), not the device, and sign out cleanly.", p:"Least privilege"});
+  } else {
+    out.push({k:"good", t:"Single-user device keeps access tied to one identity.", p:"Least privilege"});
   }
-  // teacher/staff
-  if(ctx.mgmt==="unmanaged") return 2;
-  return 3;
+  return out;
 }
 
-function contextNote(ctx){
-  if(ctx.persona==="admin") return "Admins skip the ladder: phishing-resistant MFA + PIM + separate account + (ideally) a PAW. No in-between.";
-  if(ctx.mgmt==="unmanaged" && ctx.persona==="student")
-    return "Unmanaged devices limit how far you can go. Quick win: TAP-issued passkeys + Conditional Access. To reach the top, move these devices to managed or issue FIDO2 keys.";
-  if(ctx.mgmt==="mam")
-    return "MAM protects the apps and data without fully managing the device — a good fit for personal/BYOD. Pair it with a phishing-resistant method to climb higher.";
-  if(ctx.share==="shared")
-    return "On shared devices, FIDO2 security keys are the Microsoft-recommended method: the credential travels with the person, not the device.";
-  if(ctx.mgmt==="managed")
-    return "Managed 1:1 devices can reach the top rung: device-bound passwordless (Windows Hello / Platform SSO) plus a compliant-device requirement.";
-  return "Pick the highest rung your device situation supports today, then plan the move to managed devices to unlock the rest.";
+//// ---------- MITIGATIONS ----------
+function bestStageAfter(persona, s){
+  // simulate the recommended target
+  const sim={...s};
+  sim.auth="phishres";
+  if(mgmtOf(s.own)==="unmanaged") sim.own = ownerOf(s.own)+"-mam";
+  if(ownerOf(s.own)==="company") sim.own="company-managed";
+  return stage(sim);
 }
 
-//// ---------- STATE ----------
-const state = { persona:"student", owner:"company", mgmt:"managed", share:"single" };
+function mitigations(persona, s){
+  const list=[];
+  const i=identityScore(s), mgmt=mgmtOf(s.own), owner=ownerOf(s.own);
+  const stNow=STAGE_INFO[stage(s)].label;
 
-//// ---------- RENDER: option buttons ----------
-function renderOpts(groupId, items, key){
-  const grp = document.getElementById(groupId);
-  grp.innerHTML = "";
+  if(persona==="admin"){
+    if(i<3) list.push({a:"Switch admins to phishing-resistant MFA (FIDO2 key or passkey) now.", w:"Admins are attackers' #1 target \u2014 start at the strongest method.", lift:"\u2192 Advanced"});
+    list.push({a:"Turn on just-in-time admin roles (PIM).", w:"No standing admin rights left to steal.", lift:"\u2192 Advanced"});
+    list.push({a:"Use a separate cloud-only admin account (no email/web).", w:"Keeps the privileged identity away from daily risk.", lift:"\u2192 Advanced"});
+    if(owner!=="company"||mgmt!=="managed"||s.share==="shared")
+      list.push({a:"Do admin work only from an org-owned, managed, single-user device \u2014 ideally a PAW.", w:"Removes the biggest blast-radius risk.", lift:"\u2192 Optimal"});
+    list.push({a:"Lock admin access to a compliant device + phishing-resistant strength in Conditional Access.", w:"Only trusted device + method can use admin rights.", lift:"\u2192 Optimal"});
+    return list;
+  }
+
+  // identity uplift
+  if(i<=1){
+    const method = persona==="student"
+      ? "Roll out passwordless sign-in (Windows Hello on 1:1 devices, FIDO2 keys on shared devices), bootstrapped with a Temporary Access Pass \u2014 no phone needed."
+      : "Move to phishing-resistant sign-in (passkey / FIDO2 key). Use a Temporary Access Pass to set it up without a phone.";
+    list.push({a:method, w:"Removes the weakest link: passwords and phishable codes.", lift:`${stNow} \u2192 Advanced`});
+  } else if(i===2){
+    list.push({a:"Upgrade Authenticator MFA to phishing-resistant (passkey / FIDO2 / Windows Hello).", w:"Resists fake login pages and push fatigue.", lift:"\u2192 Optimal"});
+  }
+
+  // device uplift
+  if(mgmt==="unmanaged"){
+    list.push({a: owner==="company"
+      ? "Enrol org-owned devices into management (Intune) for compliance signals."
+      : "Apply MAM app-protection policies to personal devices.", w:"Lets sign-in check device health (Assume breach).", lift:"\u2192 Advanced"});
+  } else if(mgmt==="mam" && owner==="company"){
+    list.push({a:"Move org-owned devices from MAM-only to full management.", w:"Unlocks device compliance as a Conditional Access signal.", lift:"\u2192 Optimal"});
+  }
+
+  if(s.share==="shared"){
+    list.push({a:"Standardise on FIDO2 security keys for shared devices.", w:"Microsoft-recommended for shared devices \u2014 the credential travels with the person.", lift:"strengthens Verify explicitly"});
+  }
+
+  list.push({a:"Require a compliant device + phishing-resistant strength in Conditional Access.", w:"Ties identity and device together at the door.", lift:"\u2192 Optimal"});
+  return list;
+}
+
+//// ---------- RENDER STEP 1 ----------
+function seg(persona, key, items){
+  const cur = state[persona][key];
+  const label = {auth:"Sign-in", own:"Device", share:"Personal/shared"}[key]||"";
+  let h=`<div class="seg" data-label="${label}">`;
   items.forEach(it=>{
-    const b = document.createElement("button");
-    b.type="button"; b.className="opt"; b.textContent=it.label;
-    b.setAttribute("aria-pressed", String(state[key]===it.id));
-    b.addEventListener("click", ()=>{ state[key]=it.id; renderAll(); });
-    grp.appendChild(b);
+    h+=`<button type="button" data-p="${persona}" data-k="${key}" data-v="${it.id}" aria-pressed="${cur===it.id}">${it.label}</button>`;
   });
+  return h+`</div>`;
 }
-
-//// ---------- RENDER: ladder SVG ----------
-function renderLadder(rec){
-  const colors=["#c0392b","#d98324","#2f8f5b","#2156c4"];
-  const h=64, gap=10, pad=12, w=240;
-  let svg=`<svg viewBox="0 0 ${w} ${4*h+3*gap+2*pad}" role="img" aria-label="Maturity ladder, recommended level ${rec}">`;
-  for(let i=3;i>=0;i--){
-    const y=pad+(3-i)*(h+gap);
-    const isRec=i===rec;
-    const fill=colors[i];
-    svg+=`<g>
-      <rect x="${pad}" y="${y}" rx="10" width="${w-2*pad}" height="${h}"
-        fill="${fill}" opacity="${isRec?1:0.28}" />
-      <text x="${pad+14}" y="${y+26}" fill="#fff" font-size="13" font-weight="700"
-        opacity="${isRec?1:0.9}">L${i} · ${LEVELS[i].tag}</text>
-      <text x="${pad+14}" y="${y+46}" fill="#fff" font-size="12"
-        opacity="${isRec?1:0.85}">${LEVELS[i].name}</text>`;
-    if(isRec){
-      svg+=`<text x="${w-pad-12}" y="${y+30}" fill="#fff" font-size="11" text-anchor="end" font-weight="700">◀ TARGET</text>`;
-    }
-    svg+=`</g>`;
+function methodDetail(persona, s){
+  if(s.auth==="phishres"){
+    if(s.share==="shared") return "Shared \u2192 FIDO2 security keys";
+    return "1:1 \u2192 Windows Hello / Platform SSO / passkey";
   }
-  svg+=`</svg>`;
-  document.getElementById("ladder-svg").innerHTML=svg;
+  if(s.auth==="password") return "No second factor in use";
+  if(s.auth==="weakmfa") return "Phishable factor (SMS/voice)";
+  return "Push / number-match";
+}
+function renderStep1(){
+  const root=document.getElementById("assess-rows");
+  root.innerHTML="";
+  PERSONAS.forEach(p=>{
+    const s=state[p.id];
+    const row=document.createElement("div");
+    row.className="assess-row";
+    row.innerHTML=`
+      <div class="who">${p.label}<small>${p.sub}</small></div>
+      <div>${seg(p.id,"auth",AUTH)}</div>
+      <div>${seg(p.id,"own",OWNERMGMT)}</div>
+      <div>${seg(p.id,"share",SHARE)}</div>
+      <div style="font-size:.85rem;color:var(--ink-soft);">${methodDetail(p.id,s)}</div>`;
+    root.appendChild(row);
+  });
+  root.querySelectorAll(".seg button").forEach(b=>{
+    b.addEventListener("click",()=>{
+      state[b.dataset.p][b.dataset.k]=b.dataset.v;
+      renderStep1();
+    });
+  });
 }
 
-//// ---------- RENDER: cards ----------
-function renderCards(ctx){
-  const steps=getSteps(ctx);
-  const rec=recommendedLevel(ctx);
-  const cards=document.getElementById("cards");
-  cards.innerHTML="";
-  [0,1,2,3].forEach(l=>{
-    const lv=LEVELS[l];
+//// ---------- RENDER STEP 2 ----------
+function renderStep2(){
+  const root=document.getElementById("risk-cards");
+  root.innerHTML="";
+  PERSONAS.forEach(p=>{
+    const s=state[p.id];
+    const rl=riskLevel(p.id,s), ri=RISK_INFO[rl];
+    const st=STAGE_INFO[stage(s)];
+    const fs=findings(p.id,s).map(f=>`<li class="${f.k}">${f.t}<span class="pillar"> \u00b7 ${f.p}</span></li>`).join("");
     const card=document.createElement("div");
-    card.className="card "+lv.cls+(l===rec?" recommended":"");
-    const items=(steps[l]||[]).map(s=>`<li>${s.t}<br><span class="why">${s.w}</span></li>`).join("");
+    card.className="rcard";
     card.innerHTML=`
-      <div class="chead">
-        <span class="lvl-tag">L${l}</span>
-        <span>${lv.name}</span>
-        ${l===rec?'<span class="rec-flag">Recommended target</span>':''}
+      <div class="rhead ${ri.cls}">
+        <span class="who">${p.label}</span>
+        <span class="risk-pill">${ri.label}</span>
       </div>
-      <div class="cbody"><ul>${items}</ul></div>`;
-    cards.appendChild(card);
+      <div class="stage-line">
+        Zero Trust maturity:
+        <span class="stage-chip ${st.chip}">${st.label}</span>
+      </div>
+      <div class="rbody">
+        <h4>What this means</h4>
+        <ul class="findings">${fs}</ul>
+      </div>`;
+    root.appendChild(card);
   });
-  document.getElementById("context-note").innerHTML="<b>For your selection:</b> "+contextNote(ctx);
-  renderLadder(rec);
+}
+
+//// ---------- RENDER STEP 3 ----------
+function renderStep3(){
+  const root=document.getElementById("mitigation-cards");
+  root.innerHTML="";
+  let adminNeedsLane=false;
+  PERSONAS.forEach(p=>{
+    const s=state[p.id];
+    const stNow=STAGE_INFO[stage(s)].label;
+    const stTarget=STAGE_INFO[bestStageAfter(p.id,s)].label;
+    const steps=mitigations(p.id,s);
+    if(p.id==="admin") adminNeedsLane=true;
+    const items=steps.map((m,idx)=>`
+      <div class="step-item">
+        <span class="pri">${idx+1}</span>
+        <span class="stxt">${m.a}<span class="why">${m.w}</span>${m.lift?`<span class="lift">${m.lift}</span>`:""}</span>
+      </div>`).join("");
+    const studentNote = p.id==="student"
+      ? `<div class="note info"><b>No phone? No problem.</b> Every method above is bootstrapped with a Temporary Access Pass \u2014 a short code from IT. To keep IT effort low: issue the TAP at device hand-out, allow teachers/local IT to create TAPs, or go password-free from day one.</div>` : "";
+    const card=document.createElement("div");
+    card.className="mcard";
+    card.innerHTML=`
+      <div class="mhead">
+        <span class="who">${p.label}</span>
+        <span class="uplift">${stNow} \u2192 ${stTarget}</span>
+      </div>
+      <div class="mbody">${items}</div>
+      ${studentNote}`;
+    root.appendChild(card);
+  });
+
+  // admin gold lane
+  const slot=document.getElementById("admin-lane-slot");
+  slot.innerHTML = adminNeedsLane ? `
+    <div class="admin-lane">
+      <h3>Admins: the four non-negotiables</h3>
+      <p style="color:#d6dbe8;margin:0;">A breached teacher or student account exposes one mailbox. A breached admin account exposes the whole organisation.</p>
+      <div class="gold-grid">
+        <div class="gold-card"><h4>Phishing-resistant MFA</h4><p>FIDO2 key or passkey \u2014 never SMS or plain push.</p></div>
+        <div class="gold-card"><h4>Just-in-time roles (PIM)</h4><p>Admin rights on for a task, off automatically.</p></div>
+        <div class="gold-card"><h4>Separate cloud-only account</h4><p>No email or web on the privileged identity.</p></div>
+        <div class="gold-card"><h4>Privileged Access Workstation</h4><p>A clean device used only for admin work.</p></div>
+      </div>
+    </div>` : "";
 }
 
 //// ---------- GLOSSARY ----------
 const GLOSSARY=[
-  ["MFA","Multi-factor authentication — proving who you are with more than just a password (e.g. a key, face, or PIN)."],
-  ["TAP","Temporary Access Pass — a short, time-limited code IT gives a user to set up strong sign-in. No phone required."],
-  ["FIDO2","A small physical security key that plugs in or taps. Phishing-resistant and ideal for shared devices."],
-  ["Windows Hello for Business","Signing in to a Windows device with face or a PIN that is locked to that one device."],
-  ["Conditional Access","Rules that decide when sign-in is allowed — e.g. only from a healthy, managed device."],
-  ["PIM","Privileged Identity Management — admin rights are switched on only when needed, then switched off automatically."],
-  ["PAW","Privileged Access Workstation — a clean, locked-down device used only for admin tasks."],
-  ["MAM","Mobile Application Management — protecting the apps and data on a personal device without managing the whole device."]
+  ["Zero Trust","A security model: never trust by default, always verify the user and device, and assume a breach could happen at any time."],
+  ["Maturity stages","Microsoft describes the journey as Traditional \u2192 Advanced \u2192 Optimal. Each step verifies more explicitly and limits risk further."],
+  ["Phishing-resistant MFA","Sign-in that can't be tricked by a fake login page \u2014 security keys, passkeys, or Windows Hello."],
+  ["TAP","Temporary Access Pass \u2014 a short, time-limited code from IT to set up strong sign-in. No phone required."],
+  ["FIDO2 security key","A small physical key that taps or plugs in. Phishing-resistant and ideal for shared devices."],
+  ["PIM","Privileged Identity Management \u2014 admin rights switch on only when needed, then off automatically."],
+  ["PAW","Privileged Access Workstation \u2014 a clean, locked-down device used only for admin tasks."],
+  ["MAM","Mobile Application Management \u2014 protects the apps and data on a personal device without managing the whole device."],
+  ["Conditional Access","Rules that decide when sign-in is allowed, e.g. only from a healthy, managed device with strong MFA."]
 ];
 function renderGlossary(){
-  const g=document.getElementById("glossary");
-  g.innerHTML=GLOSSARY.map(([t,d])=>`<details class="gloss"><summary>${t}</summary><p>${d}</p></details>`).join("");
+  document.getElementById("glossary").innerHTML =
+    GLOSSARY.map(([t,d])=>`<details class="gloss"><summary>${t}</summary><p>${d}</p></details>`).join("");
 }
 
-//// ---------- TERM TOOLTIPS ----------
-const TERMS={
-  whfb:"Windows Hello for Business: face or PIN sign-in locked to one device.",
-  fido2:"FIDO2 security key: a physical key, phishing-resistant, great for shared devices.",
-  tap:"Temporary Access Pass: a short code from IT to set up strong sign-in — no phone needed."
-};
-function wireTerms(){
-  document.querySelectorAll(".term").forEach(el=>{
-    const k=el.getAttribute("data-term");
-    if(TERMS[k]) el.title=TERMS[k];
+//// ---------- NAV ----------
+function showStep(n){
+  [1,2,3].forEach(i=>{
+    document.getElementById("panel-"+i).hidden = (i!==n);
   });
+  document.querySelectorAll(".step-btn").forEach(b=>{
+    const i=Number(b.dataset.step);
+    b.setAttribute("aria-current", String(i===n));
+  });
+  if(n===2) renderStep2();
+  if(n===3){ renderStep2(); renderStep3(); }
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+function unlockSteps(){
+  document.querySelectorAll('.step-btn').forEach(b=>{ b.disabled=false; });
 }
 
-//// ---------- MAIN RENDER ----------
-function renderAll(){
-  renderOpts("grp-persona", PERSONAS, "persona");
-  renderOpts("grp-owner", OWNERS, "owner");
-  renderOpts("grp-mgmt", MGMT, "mgmt");
-  renderOpts("grp-share", SHARE, "share");
-  renderCards({...state});
-}
-
-document.getElementById("btn-print").addEventListener("click",()=>window.print());
-document.getElementById("btn-reset").addEventListener("click",()=>{
-  state.persona="student"; state.owner="company"; state.mgmt="managed"; state.share="single";
-  renderAll();
+document.getElementById("to-step-2").addEventListener("click",()=>{ unlockSteps(); showStep(2); });
+document.getElementById("to-step-3").addEventListener("click",()=>{ unlockSteps(); showStep(3); });
+document.getElementById("back-1").addEventListener("click",()=>showStep(1));
+document.getElementById("back-2").addEventListener("click",()=>showStep(2));
+document.getElementById("print-report").addEventListener("click",()=>window.print());
+document.getElementById("reset-1").addEventListener("click",()=>{
+  state.admin={auth:"appmfa",own:"company-managed",share:"single"};
+  state.staff={auth:"appmfa",own:"company-managed",share:"single"};
+  state.teacher={auth:"weakmfa",own:"company-mam",share:"single"};
+  state.student={auth:"password",own:"company-unmanaged",share:"shared"};
+  renderStep1();
+});
+document.querySelectorAll(".step-btn").forEach(b=>{
+  b.addEventListener("click",()=>{ if(!b.disabled) showStep(Number(b.dataset.step)); });
 });
 
+renderStep1();
 renderGlossary();
-renderAll();
-wireTerms();
 </script>
 </body>
 </html>
