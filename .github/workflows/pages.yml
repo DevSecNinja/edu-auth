@@ -23,5 +23,7 @@ jobs:
       pull-requests: write
     with:
       # Static site: no install/build/test steps and no Cloudflare previews.
+      # Publish only the public/ directory, not the whole repo root.
+      artifact-path: "public"
       install-command: ""
       cloudflare-preview: false
