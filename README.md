@@ -1,6 +1,6 @@
-# Zero Trust MFA Guardrails for Education &amp; Non-profit
+# Zero Trust MFA Guardrails for Education
 
-An interactive, **non-technical** web page that helps schools and non-profit organisations choose the
+An interactive, **non-technical** web page that helps schools choose the
 right multi-factor authentication (MFA) and Zero Trust guardrails — **per person and per device** —
 and shows a realistic *Good → Better → Best* path instead of an all-or-nothing leap.
 
