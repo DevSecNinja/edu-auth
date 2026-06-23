@@ -1,4 +1,4 @@
-# Zero Trust MFA Guardrails for Education
+# edu-auth — Zero Trust MFA Guardrails for Education
 
 An interactive, **non-technical** web page that helps schools choose the
 right multi-factor authentication (MFA) and Zero Trust guardrails — **per person and per device** —
@@ -39,7 +39,7 @@ A workflow is included at `.github/workflows/pages.yml` that publishes the repos
 
 1. Push to the default branch.
 2. In the repository, go to **Settings → Pages** and set the source to **GitHub Actions**.
-3. The site publishes automatically on each push.
+3. The site publishes automatically on each push, at `https://<owner>.github.io/edu-auth/`.
 
 (Alternatively, enable Pages directly on the root of the branch — the site is a single static file.)
 
