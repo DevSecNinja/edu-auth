@@ -1,0 +1,48 @@
+lockfile_version: '1'
+generated_at: '2026-06-23T09:13:23.658336+00:00'
+apm_version: 0.21.0
+dependencies:
+- repo_url: DevSecNinja/ai-toolkit
+  host: github.com
+  resolved_commit: 20d1233a8fc061b7831ae75eb5e3116c4f031388
+  resolved_ref: v0.4.0
+  package_type: apm_package
+  deployed_files:
+  - .agents/skills/commit-and-release
+  - .agents/skills/commit-and-release/SKILL.md
+  - .agents/skills/email-follow-up-tracker
+  - .agents/skills/email-follow-up-tracker/SKILL.md
+  - .agents/skills/findmeetingtimes-timezone
+  - .agents/skills/findmeetingtimes-timezone/SKILL.md
+  - .agents/skills/focus-time-blocker
+  - .agents/skills/focus-time-blocker/SKILL.md
+  - .agents/skills/ooo-task-handoff-planner
+  - .agents/skills/ooo-task-handoff-planner/SKILL.md
+  - .github/agents/dutch-real-estate-agent.agent.md
+  - .github/instructions/devsecninja-conventions.instructions.md
+  - .github/prompts/coding-copilot-onboarding.prompt.md
+  - .github/prompts/home-assistant-automation-renamer.prompt.md
+  - .github/prompts/home-assistant-notification-optimizer.prompt.md
+  deployed_file_hashes:
+    .agents/skills/commit-and-release/SKILL.md: sha256:eac86c66942132842a6412c75a2fa5386910a87d721d403b8d79941d1881b625
+    .agents/skills/email-follow-up-tracker/SKILL.md: sha256:8627f23f0b5edb9123575533627987a2dc23e78d6e77d07ba86eb392edf83dd6
+    .agents/skills/findmeetingtimes-timezone/SKILL.md: sha256:0d4062c16f5b300eb42ea37bcced506d272cb3a499e4c48953a64a3b90b80fb1
+    .agents/skills/focus-time-blocker/SKILL.md: sha256:152290d6cc8ab2680c5e817e5d884acdb634f179dc214c585c6b61b3179d2a6a
+    .agents/skills/ooo-task-handoff-planner/SKILL.md: sha256:8886cdf1b9effe8a877e890d09fa54281ab680516a3837f0b24b0110d7c4d8b9
+    .github/agents/dutch-real-estate-agent.agent.md: sha256:37a7b75908da5f55536df4c15f71f52ed7c887c29d7ed72cadd914907f362fcf
+    .github/instructions/devsecninja-conventions.instructions.md: sha256:6e3d4b911a6b96952ca8cf60e4650a43812851b86e0ee20625ac3a6193493492
+    .github/prompts/coding-copilot-onboarding.prompt.md: sha256:68b159cdc1d1b151bb1f6c507de6bd6c2ef51d3d119b851aba69bf250252eacf
+    .github/prompts/home-assistant-automation-renamer.prompt.md: sha256:fe65b8df8184dd21fe84e6d9b9873fa2ef407553d5f7bbe8c9ad50fb3b3bc2b2
+    .github/prompts/home-assistant-notification-optimizer.prompt.md: sha256:bef7b8a47605fd61dcdd6eb1e60b8294e9f25f5bf2a60662e1cfa7a8c7e2b64a
+  content_hash: sha256:c683990ca58895657a42fa0fbde8dc7dc07447f2935ac91583a3f2742ac9aaa0
+mcp_servers:
+- io.github.github/github-mcp-server
+- microsoft-learn
+mcp_configs:
+  io.github.github/github-mcp-server:
+    name: io.github.github/github-mcp-server
+  microsoft-learn:
+    name: microsoft-learn
+    transport: http
+    registry: false
+    url: https://learn.microsoft.com/api/mcp
