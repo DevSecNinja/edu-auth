@@ -105,6 +105,8 @@
 
   /* ---------- Risk / result cards ---------- */
   .grid { display:grid; gap:14px; grid-template-columns:repeat(auto-fit,minmax(340px,1fr)); }
+  #result-cards { grid-template-columns:repeat(2, minmax(0,1fr)); align-items:start; }
+  @media (max-width: 720px){ #result-cards { grid-template-columns:1fr; } }
   .rcard { background:var(--surface); border:1px solid var(--line); border-radius:var(--radius);
     box-shadow:var(--shadow); overflow:hidden; }
   .rhead { padding:13px 16px; color:#fff; display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
@@ -311,7 +313,7 @@
         <div class="found-card"><h4>Continuous Access Evaluation (CAE)</h4><p>Revokes access in near real time when risk or conditions change &mdash; not just at next sign-in.</p></div>
         <div class="found-card"><h4>Self-service password reset (SSPR)</h4><p>Cuts helpdesk load and supports smooth passwordless onboarding.</p></div>
         <div class="found-card"><h4>Authentication Methods policy scoping</h4><p>Enable TAP/FIDO2 for students, keep Authenticator for staff, exclude SMS where it isn't wanted.</p></div>
-        <div class="found-card warn"><h4>Fallback for users who genuinely can't do MFA</h4><p>Use compensating controls: require a compliant/managed device and/or restrict sign-in to the school network (a named location). A weaker control than MFA &mdash; treat it as temporary.</p></div>
+        <div class="found-card warn"><h4>When passkeys aren't yet possible</h4><p>Use compensating controls: require a compliant/managed device and/or restrict sign-in to the school network (a named location). A weaker control than phishing-resistant sign-in &mdash; treat it as temporary, and see the <a href="https://learn.microsoft.com/en-us/microsoft-365/education/guide/1-reference/protect-passwordless-students" target="_blank" rel="noopener">Passwordless for Students</a> guidance.</p></div>
       </div>
     </div>
 
@@ -702,10 +704,10 @@ function renderResults(){
     b.addEventListener("click",()=>{
       const card=document.getElementById("flip-"+b.dataset.flip);
       card.classList.toggle("flipped");
-      sizeFlip(card);
+      sizeAllFlips();
     });
   });
-  // size each card to its visible face (avoids empty space when faces differ in height)
+  // size every card to the tallest visible tile (uniform 4-block, no ragged heights)
   requestAnimationFrame(sizeAllFlips);
 
   // admin gold lane
@@ -724,13 +726,22 @@ function renderResults(){
 }
 
 //// ---------- FLIP SIZING ----------
-function sizeFlip(card){
-  const inner=card.querySelector(".flip-inner");
-  const face=card.classList.contains("flipped") ? card.querySelector(".flip-back") : card.querySelector(".flip-front");
-  if(inner && face) inner.style.height = face.offsetHeight + "px";
+// Equalize every card to the tallest currently-visible face so the grid is a uniform block.
+function visibleFace(card){
+  return card.classList.contains("flipped") ? card.querySelector(".flip-back") : card.querySelector(".flip-front");
 }
 function sizeAllFlips(){
-  document.querySelectorAll("#result-cards .flip").forEach(sizeFlip);
+  const cards=[...document.querySelectorAll("#result-cards .flip")];
+  if(!cards.length) return;
+  // reset so each face measures its natural content height
+  cards.forEach(c=>c.querySelectorAll(".flip-face").forEach(f=>{ f.style.minHeight=""; }));
+  let max=0;
+  cards.forEach(c=>{ const f=visibleFace(c); if(f) max=Math.max(max, f.offsetHeight); });
+  // apply the tallest height to every card's wrapper AND both faces (so short cards stretch too)
+  cards.forEach(c=>{
+    const inner=c.querySelector(".flip-inner"); if(inner) inner.style.height = max + "px";
+    c.querySelectorAll(".flip-face").forEach(f=>{ f.style.minHeight = max + "px"; });
+  });
 }
 window.addEventListener("resize", ()=>{ if(!document.getElementById("panel-2").hidden) sizeAllFlips(); });
 
@@ -778,7 +789,8 @@ document.getElementById("back-1").addEventListener("click",()=>showStep(1));
 document.getElementById("flip-all").addEventListener("click",()=>{
   const cards=document.querySelectorAll("#result-cards .flip");
   const anyFront=[...cards].some(c=>!c.classList.contains("flipped"));
-  cards.forEach(c=>{ c.classList.toggle("flipped", anyFront); sizeFlip(c); });
+  cards.forEach(c=>c.classList.toggle("flipped", anyFront));
+  sizeAllFlips();
 });
 document.getElementById("print-report").addEventListener("click",()=>window.print());
 document.getElementById("reset-1").addEventListener("click",()=>{
