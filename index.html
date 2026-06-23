@@ -672,7 +672,7 @@ function backFace(p, s){
   const studentNote = p.id==="student"
     ? `<div class="note info">${ (enabledDevices(s).includes("mobile") && !enabledDevices(s).includes("laptop"))
         ? `<b>Mobile students.</b> Where mobiles are allowed, passkeys in Authenticator give phishing-resistant sign-in. For students without a phone or in no-phone classrooms, add a laptop/desktop for the FIDO2 / Windows Hello path.`
-        : `<b>No phone? No problem.</b> The laptop methods above are bootstrapped with a Temporary Access Pass \u2014 a short code from IT, no phone needed.` } To keep IT effort low: issue the TAP at device hand-out, allow teachers/local IT to create TAPs, or go password-free from day one.</div>` : "";
+        : `<b>No phone? No problem.</b> A Temporary Access Pass (a short code from IT) installs a <b>device-bound passkey</b> (Windows Hello / Platform SSO) so the <b>device itself becomes the second factor</b> &mdash; no phone needed.` } To keep IT effort low: issue the TAP at device hand-out, allow teachers/local IT to create TAPs, or go password-free from day one.</div>` : "";
   return `
     <div class="flip-face flip-back">
       <div class="mhead">
