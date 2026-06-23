@@ -16,6 +16,11 @@ jobs:
       contents: read
       pages: write
       id-token: write
+      # Required by the reusable workflow's Cloudflare jobs at validation time,
+      # even though they are skipped here (cloudflare-preview: false).
+      deployments: write
+      issues: write
+      pull-requests: write
     with:
       # Static site: no install/build/test steps and no Cloudflare previews.
       install-command: ""
