@@ -175,6 +175,19 @@
   .rec-badge { display:inline-block; margin-left:6px; font-size:.62rem; font-weight:700; text-transform:uppercase;
     letter-spacing:.05em; color:#1c1c2b; background:#ffd66b; border-radius:999px; padding:1px 7px; vertical-align:middle; }
 
+  /* ---------- Tenant-wide foundations lane ---------- */
+  .found-lane { background:var(--surface); border:1px solid var(--line); border-left:5px solid var(--brand);
+    border-radius:var(--radius); box-shadow:var(--shadow); padding:20px; margin-top:18px; }
+  .found-lane h3 { margin:0 0 4px; }
+  .found-intro { margin:0 0 14px; color:var(--ink-soft); font-size:.92rem; max-width:760px; }
+  .found-grid { display:grid; gap:12px; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); }
+  .found-card { background:#fbfcfe; border:1px solid var(--line); border-radius:10px; padding:12px 14px; }
+  .found-card h4 { margin:0 0 4px; font-size:.95rem; color:#16335f; }
+  .found-card p { margin:0; font-size:.85rem; color:var(--ink-soft); }
+  .found-card.pri { border-color:var(--brand); background:var(--brand-soft); }
+  .found-card.warn { border-color:#f0d98a; background:#fff8e6; }
+  .found-card.warn h4 { color:#8a6d1a; }
+
   /* ---------- Glossary ---------- */
   details.gloss { border:1px solid var(--line); border-radius:10px; background:#fff; padding:0 14px; margin:8px 0; }
   details.gloss summary { cursor:pointer; font-weight:600; padding:12px 0; }
@@ -286,6 +299,21 @@
     </details>
 
     <div class="grid" id="result-cards"></div>
+
+    <div class="found-lane">
+      <h3>Tenant-wide foundations &mdash; apply to <em>everyone</em></h3>
+      <p class="found-intro">Set these once at the tenant level. They underpin every group above and are
+        the highest-leverage controls in a Zero Trust rollout.</p>
+      <div class="found-grid">
+        <div class="found-card pri"><h4>Block legacy authentication</h4><p>Closes old protocols that bypass MFA entirely. Do this first &mdash; it protects every account.</p></div>
+        <div class="found-card"><h4>Risk-based Conditional Access</h4><p>Identity Protection reacts to risky sign-ins and users automatically (step-up or block).</p></div>
+        <div class="found-card"><h4>Token protection</h4><p>Binds sign-in tokens to the device so stolen tokens can't be replayed elsewhere.</p></div>
+        <div class="found-card"><h4>Continuous Access Evaluation (CAE)</h4><p>Revokes access in near real time when risk or conditions change &mdash; not just at next sign-in.</p></div>
+        <div class="found-card"><h4>Self-service password reset (SSPR)</h4><p>Cuts helpdesk load and supports smooth passwordless onboarding.</p></div>
+        <div class="found-card"><h4>Authentication Methods policy scoping</h4><p>Enable TAP/FIDO2 for students, keep Authenticator for staff, exclude SMS where it isn't wanted.</p></div>
+        <div class="found-card warn"><h4>Fallback for users who genuinely can't do MFA</h4><p>Use compensating controls: require a compliant/managed device and/or restrict sign-in to the school network (a named location). A weaker control than MFA &mdash; treat it as temporary.</p></div>
+      </div>
+    </div>
 
     <div id="admin-lane-slot"></div>
 
@@ -716,7 +744,13 @@ const GLOSSARY=[
   ["PIM","Privileged Identity Management \u2014 admin rights switch on only when needed, then off automatically."],
   ["PAW","Privileged Access Workstation \u2014 a clean, locked-down device used only for admin tasks."],
   ["MAM","Mobile Application Management \u2014 protects the apps and data on a personal device without managing the whole device."],
-  ["Conditional Access","Rules that decide when sign-in is allowed, e.g. only from a healthy, managed device with strong MFA."]
+  ["Conditional Access","Rules that decide when sign-in is allowed, e.g. only from a healthy, managed device with strong MFA."],
+  ["Legacy authentication","Older sign-in protocols that can't do MFA \u2014 a common way attackers bypass it. Block them tenant-wide."],
+  ["Risk-based Conditional Access","Microsoft Entra ID Protection scores each sign-in and user for risk, and can automatically step up or block access."],
+  ["Token protection","Binds the sign-in token to the original device so a stolen token can't be replayed from another machine."],
+  ["CAE","Continuous Access Evaluation \u2014 revokes access in near real time when risk or conditions change, instead of waiting for the next sign-in."],
+  ["SSPR","Self-service password reset \u2014 lets users reset their own password securely, cutting helpdesk load."],
+  ["Named location","A defined network/IP range (e.g. the school) you can use as a Conditional Access condition."]
 ];
 function renderGlossary(){
   document.getElementById("glossary").innerHTML =
