@@ -4,7 +4,7 @@ description: APM project for edu-auth
 author: Jean-Paul van Ravensberg
 dependencies:
   apm:
-  - DevSecNinja/ai-toolkit#v0.4.0
+  - DevSecNinja/ai-toolkit#20d1233a8fc061b7831ae75eb5e3116c4f031388 # v0.4.0
   mcp: []
 includes: auto
 scripts: {}
