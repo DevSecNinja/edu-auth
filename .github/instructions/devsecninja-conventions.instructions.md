@@ -27,6 +27,32 @@ Org-wide rules for every DevSecNinja repository. A repository's own
 - Never force-push to `main` or any shared/protected branch. All changes land via
   PR through normal CI; branch protection is always respected.
 
+## Reusing centralized artifacts
+
+The `DevSecNinja/.github` repository is the central home for shared CI/CD
+building blocks — reusable workflows, composite actions, Renovate presets, issue
+and PR templates, labeler configs, and other org-wide config. Before authoring
+any new workflow, composite action, or config file, you MUST check there first
+and prefer reuse over duplication.
+
+- **Check first (mandatory):** before creating a new workflow or config artifact,
+  search `DevSecNinja/.github` for existing functionality that already does what
+  you need. If a reusable workflow, composite action, or shared preset fits, call
+  or extend it instead of writing a local copy.
+- **No similar artifact? Expand an existing one.** If nothing matches but a
+  related central artifact is close, prefer extending that artifact (e.g. add an
+  input, a job, or an option) over creating a parallel one — provided the change
+  stays backward-compatible. Remember a new **required** input to a reusable
+  workflow is a breaking change (`feat!:`); add new inputs with safe defaults.
+- **Can't extend? Propose implementing it centrally.** If the functionality is
+  genuinely new and would add value for other repos too, suggest implementing it
+  in `DevSecNinja/.github` rather than locally, so every repo can consume it.
+  Call this out explicitly in the PR description and link the proposed central
+  change.
+- **Only build locally as a last resort.** Create a repo-local workflow or config
+  only when the need is truly repo-specific and has no reuse value elsewhere.
+  Document why it isn't centralized.
+
 ## Coding standards
 
 - Commit messages follow Conventional Commits (same types as above). In-PR
@@ -39,6 +65,19 @@ Org-wide rules for every DevSecNinja repository. A repository's own
   applicable so Renovate can bump it.
 - Reusable workflows in `DevSecNinja/.github` MUST NOT default package/tool
   version inputs — declare them `required: true` so the caller owns the version.
+- Dependencies: when adding or updating a package, check for and use the latest
+  stable release rather than scaffolding on — or leaving deps at — outdated
+  versions. Let Renovate keep them current thereafter.
+- Dependency provenance: prefer first-party/official sources (the vendor's own
+  package or feed) over third-party or community-maintained wrappers. Before
+  introducing a community-owned package, devcontainer feature, or action,
+  evaluate its trustworthiness (maintainer, adoption, activity); when in doubt,
+  install from the official source (e.g. via a script) instead.
+- Pin versions precisely: pin every external dependency, tool, and action to an
+  exact version — prefer a full commit SHA where the ecosystem supports it (e.g.
+  GitHub Actions) — and let Renovate manage the bumps. Avoid floating refs like
+  `latest`, `main`, or unpinned ranges. Consuming repos pin the tool versions
+  they use (e.g. in `mise.toml`) rather than relying on a central default.
 - Security: never commit plaintext secrets. Use SOPS, Vault, or GitHub Secrets.
 
 ## Tooling and files
