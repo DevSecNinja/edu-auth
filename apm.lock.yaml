@@ -1,5 +1,4 @@
 lockfile_version: '1'
-generated_at: '2026-10-03T00:08:17.009046+00:00'
 apm_version: 0.33.0
 dependencies:
 - repo_url: devsecninja/ai-toolkit
@@ -37,14 +36,9 @@ dependencies:
   - .agents/skills/obsidian/references/PROPERTIES.md
   - .agents/skills/ooo-task-handoff-planner
   - .agents/skills/ooo-task-handoff-planner/SKILL.md
-  - .agents/skills/tripit-exporter
-  - .agents/skills/tripit-exporter/LICENSE
-  - .agents/skills/tripit-exporter/SKILL.md
   - .github/agents/ada.agent.md
   - .github/agents/dutch-housing-advisor.agent.md
   - .github/agents/personal-assistant.agent.md
-  - .github/hooks/ai-toolkit-tool-guardian.json
-  - .github/hooks/scripts/ai-toolkit/scripts/tool-guardian/guard-tool.sh
   - .github/instructions/devsecninja-conventions.instructions.md
   - .github/instructions/writing-style.instructions.md
   - .github/prompts/coding-copilot-onboarding.prompt.md
@@ -67,13 +61,9 @@ dependencies:
     .agents/skills/obsidian/references/FUNCTIONS_REFERENCE.md: sha256:af0a31376a59f5b4fdbe6f51dcfe6d3aa971c8cda386b1b9801fac0cdbedbc59
     .agents/skills/obsidian/references/PROPERTIES.md: sha256:10e854dbfdf1a6a154e3ed058f0b1756a353f5fc02c0e94144a65e6158aa3d8b
     .agents/skills/ooo-task-handoff-planner/SKILL.md: sha256:8886cdf1b9effe8a877e890d09fa54281ab680516a3837f0b24b0110d7c4d8b9
-    .agents/skills/tripit-exporter/LICENSE: sha256:ad7e683b837ca04d9965bb5f1d79b3874c5e0ba1f2101f6090c3e74c09d7e7d1
-    .agents/skills/tripit-exporter/SKILL.md: sha256:139cfc53f81169a3eaab96bf1dc58891aca8d17c838b26db104a0a7eaf29f62f
     .github/agents/ada.agent.md: sha256:92c30af29bd4e8d77d66afc06da40db240c61dbfbdd19eb8d25b4793b045fedb
     .github/agents/dutch-housing-advisor.agent.md: sha256:ff7237b06a8d536daebf7dcffba32772a4dc913a36d1358bf8090516e4e21c6c
     .github/agents/personal-assistant.agent.md: sha256:a48a53144bfc4bc62d2a20f2a984f1fb55ad9ec98d30dfeccff0276e86740b65
-    .github/hooks/ai-toolkit-tool-guardian.json: sha256:ac518c3b22487e2ab72a2624262f7eb0739874853be30cf0db6184ff58d01e0b
-    .github/hooks/scripts/ai-toolkit/scripts/tool-guardian/guard-tool.sh: sha256:d500ad6b087dd2653d49590fc4926d21eaff66445f3057290808b63ea9440384
     .github/instructions/devsecninja-conventions.instructions.md: sha256:4dce4f46d59178dfebe9bd56b755aa08e6e1b3de46debe03b463e903301dbd2c
     .github/instructions/writing-style.instructions.md: sha256:4d3700565fafac3fa5f2a6ce8f7110b4716a81f44990bb71ccfd3f51d599452e
     .github/prompts/coding-copilot-onboarding.prompt.md: sha256:35e9058ff1181c9bd4612c4c2c216a2379813212e7e4db5462723aeeb12825f3
@@ -525,33 +515,6 @@ deployments:
   content_hash: sha256:8886cdf1b9effe8a877e890d09fa54281ab680516a3837f0b24b0110d7c4d8b9
 - kind: project-relative
   target: copilot
-  value: .agents/skills/tripit-exporter
-  runtime: null
-  scope: project
-  owners:
-  - devsecninja/ai-toolkit
-  active_owner: devsecninja/ai-toolkit
-  content_hash: null
-- kind: project-relative
-  target: copilot
-  value: .agents/skills/tripit-exporter/LICENSE
-  runtime: null
-  scope: project
-  owners:
-  - devsecninja/ai-toolkit
-  active_owner: devsecninja/ai-toolkit
-  content_hash: sha256:ad7e683b837ca04d9965bb5f1d79b3874c5e0ba1f2101f6090c3e74c09d7e7d1
-- kind: project-relative
-  target: copilot
-  value: .agents/skills/tripit-exporter/SKILL.md
-  runtime: null
-  scope: project
-  owners:
-  - devsecninja/ai-toolkit
-  active_owner: devsecninja/ai-toolkit
-  content_hash: sha256:139cfc53f81169a3eaab96bf1dc58891aca8d17c838b26db104a0a7eaf29f62f
-- kind: project-relative
-  target: copilot
   value: .github/agents/accessibility.agent.md
   runtime: null
   scope: project
@@ -696,24 +659,6 @@ deployments:
   content_hash: sha256:396e333df4318d590a8b07f960a61361169689d68896731149ea1f5a11ddc8fd
 - kind: project-relative
   target: copilot
-  value: .github/hooks/ai-toolkit-tool-guardian.json
-  runtime: null
-  scope: project
-  owners:
-  - devsecninja/ai-toolkit
-  active_owner: devsecninja/ai-toolkit
-  content_hash: sha256:ac518c3b22487e2ab72a2624262f7eb0739874853be30cf0db6184ff58d01e0b
-- kind: project-relative
-  target: copilot
-  value: .github/hooks/scripts/ai-toolkit/scripts/tool-guardian/guard-tool.sh
-  runtime: null
-  scope: project
-  owners:
-  - devsecninja/ai-toolkit
-  active_owner: devsecninja/ai-toolkit
-  content_hash: sha256:d500ad6b087dd2653d49590fc4926d21eaff66445f3057290808b63ea9440384
-- kind: project-relative
-  target: copilot
   value: .github/instructions/devsecninja-conventions.instructions.md
   runtime: null
   scope: project
@@ -766,15 +711,6 @@ deployments:
   - .
   active_owner: .
   content_hash: null
-- kind: uri
-  target: mcp
-  value: microsoft-learn
-  runtime: copilot
-  scope: project
-  owners:
-  - .
-  active_owner: .
-  content_hash: null
 mcp_servers:
 - io.github.github/github-mcp-server
 - microsoft-learn
@@ -789,7 +725,6 @@ mcp_configs:
 mcp_target_servers:
   copilot:
   - io.github.github/github-mcp-server
-  - microsoft-learn
 mcp_config_provenance:
   io.github.github/github-mcp-server: ai-toolkit
   microsoft-learn: ai-toolkit
