@@ -1,6 +1,6 @@
 {
   "name": "Template Devcontainer",
-  "image": "mcr.microsoft.com/devcontainers/javascript-node:24@sha256:21f15d367bfc5ceadabb9989be48029cba1e6bd80da323405232614a267a9c45",
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:26@sha256:782cb901987d8606987d5e3135dbec6fad70744b593fd29360e2b66ee278b060",
   "postCreateCommand": "",
   "customizations": {
     "vscode": {
