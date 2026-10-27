@@ -1,12 +1,12 @@
 lockfile_version: '1'
-apm_version: 0.33.0
+apm_version: 0.35.0
 dependencies:
 - repo_url: devsecninja/ai-toolkit
   materialization_repo_url: DevSecNinja/ai-toolkit
   name: ai-toolkit
   host: github.com
   resolved_commit: 2491cedec727e722a7751ff516ae7b7c95de922b
-  resolved_ref: v0.8.0
+  resolved_ref: 2491cedec727e722a7751ff516ae7b7c95de922b
   version: 0.8.0
   package_type: apm_package
   deployed_files:
